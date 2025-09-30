@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация о студентах</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --container-bg: white;
+            --border-color: #ddd;
+            --button-bg: #3498db;
+            --button-hover: #2980b9;
+            --card-bg: white;
+            --shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --container-bg: #2d2d2d;
+            --border-color: #444;
+            --button-bg: #2980b9;
+            --button-hover: #3498db;
+            --card-bg: #3d3d3d;
+            --shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        * {
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .header-image {
+            width: 100%;
+            height: 250px;
+            background-image: url('https://i.pinimg.com/736x/fb/96/37/fb9637e6c048495a9e670c540d1fcc1c.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .nav-btn {
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .back-btn {
+            background-color: #95a5a6;
+        }
+
+        .back-btn:hover {
+            background-color: #7f8c8d;
+        }
+
+        .fetch-btn {
+            background-color: #3498db;
+            padding: 15px 30px;
+            font-size: 18px;
+        }
+
+        .fetch-btn:hover {
+            background-color: #3498db;
+        }
+
+        .theme-btn {
+            background-color: #3498db;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .theme-btn:hover {
+            background-color: #3498db;
+        }
+
+        .student-info {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .student-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .student-card h3 {
+            color: var(--text-color);
+            margin-top: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            padding: 12px;
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: var(--text-color);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: var(--text-color);
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--text-color);
+            font-style: italic;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+            background-color: #ffeaea;
+            border-radius: 8px;
+            border: 1px solid #e74c3c;
+            display: none;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .theme-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .theme-controls {
+                justify-content: center;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation">
+            <button class="nav-btn back-btn" onclick="goBack()">
+                Назад
+            </button>
+            
+            <div class="theme-controls">
+                <button class="nav-btn theme-btn" onclick="toggleTheme()" id="themeBtn">
+                    Сменить тему
+                </button>
+            </div>
+        </div>
+
+        <div class="header-image"></div>
+        
+        <h1>Информация о студентах</h1>
+        
+        <div class="button-container">
+            <button class="nav-btn fetch-btn" onclick="fetchStudentInfo()">
+                Получить информацию о студентах
+            </button>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            Загрузка данных...
+        </div>
+        
+        <div id="error" class="error"></div>
+        
+        <div id="studentInfo" class="student-info">
+            <!-- Информация о студентах будет загружена здесь после нажатия кнопки -->
+        </div>
+    </div>
+
+    <script>
+        // Определяем текущую тему
+        function getCurrentTheme() {
+            return document.documentElement.getAttribute('data-theme') || 'light';
+        }
+
+        // Переключаем тему
+        function toggleTheme() {
+            const currentTheme = getCurrentTheme();
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Загружаем сохраненную тему
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        }
+
+        // Форматирование даты из формата YYYY-MM-DD в DD.MM.YYYY
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}.${month}.${year}`;
+        }
+
+        // Форматирование номера телефона
+        function formatPhone(phone) {
+            if (!phone) return '';
+            // Преобразуем +79991234567 в +7 (999) 123-45-67
+            const cleaned = phone.replace(/\D/g, '');
+            const match = cleaned.match(/^(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})$/);
+            if (match) {
+                return `+${match[1]} (${match[2]}) ${match[3]}-${match[4]}-${match[5]}`;
+            }
+            return phone;
+        }
+
+        // Загружаем данные только после нажатия кнопки
+        function fetchStudentInfo() {
+            const loadingElement = document.getElementById('loading');
+            const errorElement = document.getElementById('error');
+            const studentInfoElement = document.getElementById('studentInfo');
+            const fetchButton = document.querySelector('.fetch-btn');
+            
+            // Показываем загрузку, скрываем ошибки и предыдущие данные
+            loadingElement.style.display = 'block';
+            errorElement.style.display = 'none';
+            studentInfoElement.style.display = 'none';
+            fetchButton.disabled = true;
+            fetchButton.textContent = 'Загрузка...';
+            
+            // Эмуляция запроса к базе данных с реальными данными из SQL-дампа
+            setTimeout(() => {
+                loadingElement.style.display = 'none';
+                fetchButton.disabled = false;
+                fetchButton.textContent = 'Получить информацию о студентах';
+                
+                try {
+                    // Данные из SQL-дампа
+                    const studentsData = [
+                        {
+                            id: 1,
+                            fullName: "Иванов Иван Иванович",
+                            phone: "+7 (999) 123-45-67",
+                            birthDate: "15.05.2000",
+                            checkInDate: "02.09.2025",
+                            checkOutDate: "",
+                            dormitoryId: "D-001",
+                            roomId: "D-001-103",
+                            averageScore: 4.50,
+                            socialWork: "Да",
+                            familyIncome: 25000.00
+                        }
+                    ];
+                    
+                    displayStudentInfo(studentsData);
+                    
+                } catch (error) {
+                    errorElement.textContent = 'Ошибка при загрузке данных: ' + error.message;
+                    errorElement.style.display = 'block';
+                }
+            }, 2000);
+        }
+        
+        function displayStudentInfo(students) {
+            const studentInfoElement = document.getElementById('studentInfo');
+            
+            if (students.length === 0) {
+                studentInfoElement.innerHTML = '<div class="error">Нет данных о студентах</div>';
+                studentInfoElement.style.display = 'block';
+                return;
+            }
+            
+            let html = '<h2>Список студентов</h2>';
+            
+            students.forEach(student => {
+                html += `
+                    <div class="student-card">
+                        <h3>Студент #${student.id}</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">ФИО:</span>
+                                <span class="info-value">${student.fullName}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Телефон:</span>
+                                <span class="info-value">${student.phone}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Дата рождения:</span>
+                                <span class="info-value">${student.birthDate}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Дата заселения:</span>
+                                <span class="info-value">${student.checkInDate}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Дата выселения:</span>
+                                <span class="info-value">${student.checkOutDate || 'Не выселен'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ID Общежития:</span>
+                                <span class="info-value">${student.dormitoryId}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ID Комнаты:</span>
+                                <span class="info-value">${student.roomId}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Средний балл:</span>
+                                <span class="info-value">${student.averageScore}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Общественная нагрузка:</span>
+                                <span class="info-value">${student.socialWork}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Доход на члена семьи:</span>
+                                <span class="info-value">${student.familyIncome} руб.</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            studentInfoElement.innerHTML = html;
+            studentInfoElement.style.display = 'block';
+        }
+        
+        function goBack() {
+            window.history.back();
+        }
+
+        // Загружаем сохраненную тему при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadSavedTheme);
+    </script>
+</body>
+</html>

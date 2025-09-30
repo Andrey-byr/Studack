@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Студенческий городок | Главная</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Все существующие стили остаются без изменений */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.3s;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #1a1a1a;
+            --text: #000000;
+            --bg: #ffffff;
+            --card-bg: #ffffff;
+            --header-bg: rgba(255, 255, 255, 0.1);
+            --border: rgba(0, 0, 0, 0.1);
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-theme {
+            --primary: #34495e;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #2c3e50;
+            --dark: #ecf0f1;
+            --text: #ecf0f1;
+            --bg: #1a1a1a;
+            --card-bg: rgba(44, 62, 80, 0.9);
+            --header-bg: rgba(26, 26, 26, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ... остальные стили без изменений ... */
+
+        /* Новые стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            color: var(--text);
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .data-table tr:hover {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px var(--shadow);
+            z-index: 3000;
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <button class="language-btn" id="languageBtn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">Русский</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+            <div class="language-option" data-lang="ru">
+                <img src="https://flagcdn.com/w40/by.png" class="language-flag" alt="Belarusian">
+                Русский
+            </div>
+            <div class="language-option" data-lang="en">
+                <img src="https://flagcdn.com/w40/gb.png" class="language-flag" alt="English">
+                English
+            </div>
+            <div class="language-option" data-lang="es">
+                <img src="https://flagcdn.com/w40/es.png" class="language-flag" alt="Spanish">
+                Español
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Header & Hero Section -->
+    <header>
+        <!-- Floating Elements -->
+        <div class="floating-elements" id="floatingElements"></div>
+
+        <!-- Floating Hogwarts Castle -->
+        <div class="floating-castle">
+            <img src="https://images.unsplash.com/photo-1633617477271-d4f351ff7c7c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Хогвартс">
+        </div>
+
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span data-translate="logo">СТУДГОРОДОК</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#about" data-translate="nav_about">О кампусе</a></li>
+                    <li><a href="#services" data-translate="nav_services">Услуги</a></li>
+                    <li><a href="#gallery" data-translate="nav_gallery">Галерея</a></li>
+                    <li><a href="#contact" data-translate="nav_contact">Регистрация</a></li>
+                    <li><a href="#" id="viewDataBtn" data-translate="nav_data">Просмотр данных</a></li>
+                </ul>
+            </nav>
+            
+            <div class="hero">
+                <h1 data-translate="hero_title">СТУДЕНЧЕСКИЙ<br>ГОРОДОК</h1>
+                <p data-translate="hero_description">Современное пространство для учебы, жизни и развития. Инновационная инфраструктура, созданная для комфорта и успеха каждого студента.</p>
+                <a href="#contact" class="btn" data-translate="hero_button">Зарегистрироваться</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Остальные секции (about, services, gallery) остаются без изменений -->
+
+    <!-- Contact Section -->
+    <section class="section-modern section-with-bg contact-section" id="contact">
+        <div class="container">
+            <div class="section-title-modern">
+                <h2 data-translate="contact_title">Регистрация студента</h2>
+                <p data-translate="contact_description">Заполните анкету для заселения в студенческий городок</p>
+            </div>
+            
+            <div class="student-form-modern">
+                <form id="studentForm">
+                    <!-- Personal Information Section -->
+                    <h3 class="form-section-title" data-translate="form_personal_info">Личная информация</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group-modern">
+                            <label for="fullName" class="label-required" data-translate="form_full_name">ФИО</label>
+                            <input type="text" id="fullName" class="form-control-modern" required 
+                                   placeholder="Иванов Иван Иванович">
+                        </div>
+                        
+                        <div class="form-group-modern">
+                            <label for="birthDate" class="label-required" data-translate="form_birth_date">Дата рождения</label>
+                            <input type="date" id="birthDate" class="form-control-modern" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label for="phone" class="label-required" data-translate="form_phone">Номер телефона</label>
+                        <input type="tel" id="phone" class="form-control-modern" required
+                               placeholder="+375 (29) 123-45-67">
+                    </div>
+
+                    <!-- Academic Information Section -->
+                    <h3 class="form-section-title" data-translate="form_academic_info">Учебная информация</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group-modern">
+                            <label for="gpa" class="label-required" data-translate="form_gpa">Средний балл</label>
+                            <input type="number" id="gpa" class="form-control-modern" required 
+                                   min="2.0" max="5.0" step="0.1" placeholder="4.5">
+                            <div class="form-note" data-translate="form_gpa_note">От 2.0 до 5.0</div>
+                        </div>
+                        
+                        <div class="form-group-modern">
+                            <label data-translate="form_public_work">Общественная нагрузка</label>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="publicWork" name="publicWork">
+                                <label for="publicWork" data-translate="form_public_work_label">Наличие общественной нагрузки</label>
+                            </div>
+                            <div class="form-note" data-translate="form_public_work_note">Участие в студенческих организациях, волонтерство и т.д.</div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Information Section -->
+                    <h3 class="form-section-title" data-translate="form_financial_info">Финансовая информация</h3>
+                    
+                    <div class="form-group-modern">
+                        <label for="familyIncome" class="label-required" data-translate="form_family_income">
+                            Средний доход на члена семьи (в месяц)
+                        </label>
+                        <div class="income-input">
+                            <input type="number" id="familyIncome" class="form-control-modern" 
+                                   min="0" step="10" placeholder="1000" required>
+                            <span class="currency">Br</span>
+                        </div>
+                        <div class="form-note" data-translate="form_income_note">
+                            Укажите средний доход на одного члена семьи в белорусских рублях
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="form-group-modern full-width">
+                        <label for="additionalInfo" data-translate="form_additional_info">Дополнительная информация</label>
+                        <textarea id="additionalInfo" class="form-control-modern" 
+                                  rows="4" placeholder="Особые пожелания, медицинские показания, другая важная информация..."
+                                  data-translate="form_additional_placeholder"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group-modern full-width" style="text-align: center; margin-top: 40px;">
+                        <button type="submit" class="btn" style="min-width: 200px;" data-translate="form_submit">
+                            Отправить заявку
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer остается без изменений -->
+
+    <!-- Модальное окно для просмотра данных -->
+    <div class="modal" id="dataModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <h2 class="modal-title" data-translate="modal_title">Зарегистрированные студенты</h2>
+            <div id="studentsData">
+                <!-- Данные будут загружены здесь -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="notification" id="notification">
+        <span id="notificationText">Данные успешно сохранены!</span>
+    </div>
+
+    <script>
+        // Language translations (добавляем новые переводы)
+        const translations = {
+            ru: {
+                // ... существующие переводы ...
+                nav_data: "Просмотр данных",
+                modal_title: "Зарегистрированные студенты",
+                no_data: "Нет данных о студентах",
+                table_name: "ФИО",
+                table_birth: "Дата рождения",
+                table_phone: "Телефон",
+                table_grade: "Средний балл",
+                table_work: "Общественная работа",
+                table_income: "Доход на члена семьи"
+            },
+            en: {
+                // ... существующие переводы ...
+                nav_data: "View Data",
+                modal_title: "Registered Students",
+                no_data: "No student data",
+                table_name: "Full Name",
+                table_birth: "Date of Birth",
+                table_phone: "Phone",
+                table_grade: "Average Grade",
+                table_work: "Public Work",
+                table_income: "Income per Member"
+            },
+            es: {
+                // ... существующие переводы ...
+                nav_data: "Ver Datos",
+                modal_title: "Estudiantes Registrados",
+                no_data: "No hay datos de estudiantes",
+                table_name: "Nombre Completo",
+                table_birth: "Fecha de Nacimiento",
+                table_phone: "Teléfono",
+                table_grade: "Promedio",
+                table_work: "Trabajo Público",
+                table_income: "Ingreso por Miembro"
+            }
+        };
+
+        // Управление данными
+        const STORAGE_KEY = 'student_dormitory_data';
+
+        // Функция для сохранения данных
+        function saveStudentData(formData) {
+            let students = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            
+            // Добавляем ID и дату создания
+            const studentData = {
+                id: Date.now(), // Используем timestamp как уникальный ID
+                createdAt: new Date().toISOString(),
+                ...formData
+            };
+            
+            students.push(studentData);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+            
+            return studentData;
+        }
+
+        // Функция для загрузки всех данных
+        function loadAllStudents() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        }
+
+        // Функция для отображения данных в модальном окне
+        function displayStudentsData() {
+            const students = loadAllStudents();
+            const container = document.getElementById('studentsData');
+            const langData = translations[currentLang];
+            
+            if (students.length === 0) {
+                container.innerHTML = `<p>${langData.no_data}</p>`;
+                return;
+            }
+            
+            let html = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>${langData.table_name}</th>
+                            <th>${langData.table_birth}</th>
+                            <th>${langData.table_phone}</th>
+                            <th>${langData.table_grade}</th>
+                            <th>${langData.table_work}</th>
+                            <th>${langData.table_income}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            students.forEach(student => {
+                html += `
+                    <tr>
+                        <td>${student.fullName}</td>
+                        <td>${new Date(student.birthDate).toLocaleDateString()}</td>
+                        <td>${student.phone}</td>
+                        <td>${student.gpa}</td>
+                        <td>${student.publicWork ? '✓' : '✗'}</td>
+                        <td>${student.familyIncome} Br</td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Функция для показа уведомления
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Модифицированный обработчик формы
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const fullName = document.getElementById('fullName').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const phone = document.getElementById('phone').value;
+            const gpa = document.getElementById('gpa').value;
+            const familyIncome = document.getElementById('familyIncome').value;
+            
+            if (!fullName || !birthDate || !phone || !gpa || !familyIncome) {
+                alert('Пожалуйста, заполните все обязательные поля');
+                return;
+            }
+            
+            // Collect form data
+            const formData = {
+                fullName: fullName,
+                birthDate: birthDate,
+                phone: phone,
+                gpa: parseFloat(gpa),
+                publicWork: document.getElementById('publicWork').checked,
+                familyIncome: parseFloat(familyIncome),
+                additionalInfo: document.getElementById('additionalInfo').value
+            };
+            
+            // Сохраняем данные
+            saveStudentData(formData);
+            
+            // Показываем уведомление
+            const successMessage = translations[currentLang].form_submit + ' успешно отправлена!';
+            showNotification(successMessage);
+            
+            // Reset form
+            this.reset();
+        });
+
+        // Управление модальным окном
+        document.getElementById('viewDataBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            displayStudentsData();
+            document.getElementById('dataModal').classList.add('show');
+        });
+
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('dataModal').classList.remove('show');
+        });
+
+        // Закрытие модального окна при клике вне его
+        document.getElementById('dataModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+            }
+        });
+
+        // Существующий код для языка и темы остается без изменений
+        let currentLang = 'ru';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const langData = translations[lang];
+            
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (langData[key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = langData[key];
+                    } else {
+                        if (key === 'hero_title') {
+                            element.innerHTML = langData[key].replace('\n', '<br>');
+                        } else {
+                            element.textContent = langData[key];
+                        }
+                    }
+                }
+            });
+            
+            document.getElementById('currentLanguage').textContent = langData.currentLanguage;
+            localStorage.setItem('preferredLanguage', lang);
+            document.getElementById('languageDropdown').classList.remove('show');
+        }
+
+        // Остальной существующий JavaScript код остается без изменений
+        // (управление языком, тема, плавная прокрутка, валидация и т.д.)
+    </script>
+</body>
+</html>
