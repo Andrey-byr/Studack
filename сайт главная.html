@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Студенческий городок | Главная</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.3s;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #1a1a1a;
+            --text: #000000;
+            --bg: #ffffff;
+            --card-bg: #ffffff;
+            --header-bg: rgba(255, 255, 255, 0.1);
+            --border: rgba(0, 0, 0, 0.1);
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-theme {
+            --primary: #34495e;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #2c3e50;
+            --dark: #ecf0f1;
+            --text: #ecf0f1;
+            --bg: #1a1a1a;
+            --card-bg: rgba(44, 62, 80, 0.9);
+            --header-bg: rgba(26, 26, 26, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 80px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .language-btn:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 5px;
+            min-width: 150px;
+            box-shadow: 0 5px 15px var(--shadow);
+            display: none;
+            z-index: 1001;
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .language-option:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .language-flag {
+            width: 20px;
+            height: 15px;
+            border-radius: 2px;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+            background: #2980b9;
+        }
+
+        /* Modern Header Styles */
+        header {
+            background: 
+                linear-gradient(135deg, rgba(44, 62, 80, 0.85) 0%, rgba(52, 73, 94, 0.75) 100%),
+                url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dark-theme header {
+            background: 
+                linear-gradient(135deg, rgba(26, 26, 26, 0.85) 0%, rgba(44, 62, 80, 0.75) 100%),
+                url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        }
+
+        /* Floating Hogwarts Image */
+        .floating-castle {
+            position: absolute;
+            right: 8%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 400px;
+            z-index: 2;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-castle img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.3));
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(-50%) translateX(0px);
+            }
+            50% {
+                transform: translateY(-50%) translateX(-20px);
+            }
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            position: relative;
+            z-index: 3;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .logo i {
+            margin-right: 15px;
+            color: var(--secondary);
+            font-size: 2.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 40px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 1.1rem;
+            font-family: 'Montserrat', sans-serif;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 0;
+            position: relative;
+            z-index: 2;
+            max-width: 50%;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 25px;
+            line-height: 1.1;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-family: 'Montserrat', sans-serif;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            max-width: 600px;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            line-height: 1.8;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 18px 45px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'Montserrat', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Section Title Modern */
+        .section-title-modern {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title-modern h2 {
+            font-size: 3rem;
+            color: var(--text);
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Montserrat', sans-serif;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title-modern h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .section-title-modern p {
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--text);
+            font-size: 1.2rem;
+            opacity: 0.8;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Modern Sections with Background Images */
+        .section-modern {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-with-bg {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .section-with-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            z-index: 0;
+        }
+
+        .dark-theme .section-with-bg::before {
+            background: rgba(26, 26, 26, 0.92);
+        }
+
+        .section-with-bg .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* About Section Background */
+        .about-section {
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+                url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2064&q=80');
+        }
+
+        .dark-theme .about-section {
+            background: 
+                linear-gradient(rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.9)),
+                url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2064&q=80');
+        }
+
+        /* Services Section Background */
+        .services-section {
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)),
+                url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80');
+        }
+
+        .dark-theme .services-section {
+            background: 
+                linear-gradient(rgba(26, 26, 26, 0.88), rgba(26, 26, 26, 0.88)),
+                url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80');
+        }
+
+        /* Gallery Section Background */
+        .gallery-section {
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
+                url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        }
+
+        .dark-theme .gallery-section {
+            background: 
+                linear-gradient(rgba(26, 26, 26, 0.85), rgba(26, 26, 26, 0.85)),
+                url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        }
+
+        /* Contact Section Background */
+        .contact-section {
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+                url('https://images.unsplash.com/photo-1571624436279-b272aff752b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80');
+        }
+
+        .dark-theme .contact-section {
+            background: 
+                linear-gradient(rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.9)),
+                url('https://images.unsplash.com/photo-1571624436279-b272aff752b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80');
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-modern {
+            background: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+
+        .feature-modern:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .feature-icon-modern {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-modern h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: var(--text);
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .feature-modern p {
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Services Section */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-modern {
+            background: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+
+        .service-modern:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .service-icon-modern {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gallery-item-modern {
+            height: 280px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 25px var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .gallery-item-modern:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .gallery-item-modern img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .gallery-item-modern:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Student Form Styles */
+        .student-form-modern {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-group-modern {
+            margin-bottom: 25px;
+        }
+
+        .form-group-modern.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group-modern label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-group-modern .label-required::after {
+            content: " *";
+            color: var(--accent);
+        }
+
+        .form-control-modern {
+            width: 100%;
+            padding: 15px 20px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-control-modern:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--secondary);
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .form-note {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .income-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .income-input .form-control-modern {
+            flex: 1;
+        }
+
+        .currency {
+            font-weight: 600;
+            color: var(--secondary);
+            white-space: nowrap;
+        }
+
+        .form-section-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .form-section-title:first-child {
+            margin-top: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-column h3 {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: var(--secondary);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .floating-castle {
+                width: 400px;
+                height: 320px;
+                right: 5%;
+            }
+            
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .floating-castle {
+                display: none;
+            }
+            
+            .hero {
+                max-width: 100%;
+                text-align: center;
+                align-items: center;
+            }
+            
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .btn {
+                padding: 15px 35px;
+                font-size: 1.1rem;
+            }
+            
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+            
+            .language-selector {
+                top: 15px;
+                right: 70px;
+            }
+            
+            .section-title-modern h2 {
+                font-size: 2.2rem;
+            }
+            
+            .section-modern {
+                padding: 70px 0;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .student-form-modern {
+                padding: 30px 25px;
+            }
+            
+            .form-section-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+                letter-spacing: 2px;
+            }
+            
+            .logo {
+                font-size: 1.6rem;
+            }
+            
+            .logo i {
+                font-size: 1.8rem;
+            }
+            
+            .section-title-modern h2 {
+                font-size: 1.8rem;
+            }
+            
+            .language-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Additional modern elements */
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float-random 15s infinite linear;
+        }
+
+        @keyframes float-random {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(20px, 40px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 80px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-20px, 40px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+    .student-info-btn {
+        width: 100%;
+        padding: 12px 15px;
+        margin: 10px 0;
+        background: var(--button-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        text-align: left;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+
+.student-info-btn:hover {
+    background: var(--button-hover);
+    transform: translateX(5px);
+}
+
+.btn-icon {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+    </style>
+</head>
+<body class="light-theme">
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <button class="language-btn" id="languageBtn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">Русский</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+            <div class="language-option" data-lang="ru">
+                <img src="https://flagcdn.com/w40/by.png" class="language-flag" alt="Belarusian">
+                Русский
+            </div>
+            <div class="language-option" data-lang="en">
+                <img src="https://flagcdn.com/w40/gb.png" class="language-flag" alt="English">
+                English
+            </div>
+            <div class="language-option" data-lang="es">
+                <img src="https://flagcdn.com/w40/es.png" class="language-flag" alt="Spanish">
+                Español
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="nav-item">
+    <button class="theme-button student-info-btn" onclick="goToStudentInfo()">
+        <span class="btn-icon">🎓</span>
+        Информация о студентах
+    </button>
+    </div>
+
+    <!-- Header & Hero Section -->
+    <header>
+        <!-- Floating Elements -->
+        <div class="floating-elements" id="floatingElements"></div>
+
+        <!-- Floating Hogwarts Castle -->
+        <div class="floating-castle">
+            <img src="https://images.unsplash.com/photo-1633617477271-d4f351ff7c7c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Хогвартс">
+        </div>
+
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span data-translate="logo">СТУДГОРОДОК</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#about" data-translate="nav_about">О кампусе</a></li>
+                    <li><a href="#services" data-translate="nav_services">Услуги</a></li>
+                    <li><a href="#gallery" data-translate="nav_gallery">Галерея</a></li>
+                    <li><a href="#contact" data-translate="nav_contact">Регистрация</a></li>
+                </ul>
+            </nav>
+            
+            <div class="hero">
+                <h1 data-translate="hero_title">СТУДЕНЧЕСКИЙ<br>ГОРОДОК</h1>
+                <p data-translate="hero_description">Современное пространство для учебы, жизни и развития. Инновационная инфраструктура, созданная для комфорта и успеха каждого студента.</p>
+                <a href="#contact" class="btn" data-translate="hero_button">Зарегистрироваться</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section class="section-modern section-with-bg about-section" id="about">
+        <div class="container">
+            <div class="section-title-modern">
+                <h2 data-translate="about_title">О нашем кампусе</h2>
+                <p data-translate="about_description">Современное образовательное пространство, где технологии встречаются с комфортом</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3 data-translate="feature1_title">Умные общежития</h3>
+                    <p data-translate="feature1_description">Современные комнаты с системой умного дома, индивидуальным дизайном и эргономичной мебелью для комфортного проживания</p>
+                </div>
+                
+                <div class="feature-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 data-translate="feature2_title">Образовательные пространства</h3>
+                    <p data-translate="feature2_description">Современные аудитории, лаборатории и коворкинги, оборудованные по последнему слову техники</p>
+                </div>
+                
+                <div class="feature-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3 data-translate="feature3_title">Экологичная среда</h3>
+                    <p data-translate="feature3_description">Энергоэффективные здания, зеленые зоны и экологически чистые материалы для здоровой атмосферы</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section-modern section-with-bg services-section" id="services">
+        <div class="container">
+            <div class="section-title-modern">
+                <h2 data-translate="services_title">Наши услуги</h2>
+                <p data-translate="services_description">Комплексный подход к организации студенческой жизни</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-modern">
+                    <div class="service-icon-modern">
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                    <h3 data-translate="service1_title">Цифровая инфраструктура</h3>
+                    <p data-translate="service1_description">Высокоскоростной интернет, облачные сервисы и цифровые образовательные платформы</p>
+                </div>
+                
+                <div class="service-modern">
+                    <div class="service-icon-modern">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3 data-translate="service2_title">Питание</h3>
+                    <p data-translate="service2_description">Современные столовые и кафе с разнообразным и здоровым меню по доступным ценам</p>
+                </div>
+                
+                <div class="service-modern">
+                    <div class="service-icon-modern">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 data-translate="service3_title">Безопасность</h3>
+                    <p data-translate="service3_description">Круглосуточная охрана, система видеонаблюдения и современные системы контроля доступа</p>
+                </div>
+                
+                <div class="service-modern">
+                    <div class="service-icon-modern">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h3 data-translate="service4_title">Спорт и здоровье</h3>
+                    <p data-translate="service4_description">Современный спортивный комплекс, медицинский центр и зоны для активного отдыха</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="section-modern section-with-bg gallery-section" id="gallery">
+        <div class="container">
+            <div class="section-title-modern">
+                <h2 data-translate="gallery_title">Галерея кампуса</h2>
+                <p data-translate="gallery_description">Познакомьтесь с атмосферой нашего студенческого городка</p>
+            </div>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item-modern">
+                    <img src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2064&q=80" alt="Общежитие">
+                </div>
+                <div class="gallery-item-modern">
+                    <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80" alt="Библиотека">
+                </div>
+                <div class="gallery-item-modern">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Спортзал">
+                </div>
+                <div class="gallery-item-modern">
+                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Территория">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section-modern section-with-bg contact-section" id="contact">
+        <div class="container">
+            <div class="section-title-modern">
+                <h2 data-translate="contact_title">Регистрация студента</h2>
+                <p data-translate="contact_description">Заполните анкету для заселения в студенческий городок</p>
+            </div>
+            
+            <div class="student-form-modern">
+                <form id="studentForm">
+                    <!-- Personal Information Section -->
+                    <h3 class="form-section-title" data-translate="form_personal_info">Личная информация</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group-modern">
+                            <label for="fullName" class="label-required" data-translate="form_full_name">ФИО</label>
+                            <input type="text" id="fullName" class="form-control-modern" required 
+                                   placeholder="Иванов Иван Иванович">
+                        </div>
+                        
+                        <div class="form-group-modern">
+                            <label for="birthDate" class="label-required" data-translate="form_birth_date">Дата рождения</label>
+                            <input type="date" id="birthDate" class="form-control-modern" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label for="phone" class="label-required" data-translate="form_phone">Номер телефона</label>
+                        <input type="tel" id="phone" class="form-control-modern" required
+                               placeholder="+375 (29) 123-45-67">
+                    </div>
+
+                    <!-- Academic Information Section -->
+                    <h3 class="form-section-title" data-translate="form_academic_info">Учебная информация</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group-modern">
+                            <label for="gpa" class="label-required" data-translate="form_gpa">Средний балл</label>
+                            <input type="number" id="gpa" class="form-control-modern" required 
+                                   min="2.0" max="5.0" step="0.1" placeholder="4.5">
+                            <div class="form-note" data-translate="form_gpa_note">От 2.0 до 5.0</div>
+                        </div>
+                        
+                        <div class="form-group-modern">
+                            <label data-translate="form_public_work">Общественная нагрузка</label>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="publicWork" name="publicWork">
+                                <label for="publicWork" data-translate="form_public_work_label">Наличие общественной нагрузки</label>
+                            </div>
+                            <div class="form-note" data-translate="form_public_work_note">Участие в студенческих организациях, волонтерство и т.д.</div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Information Section -->
+                    <h3 class="form-section-title" data-translate="form_financial_info">Финансовая информация</h3>
+                    
+                    <div class="form-group-modern">
+                        <label for="familyIncome" class="label-required" data-translate="form_family_income">
+                            Средний доход на члена семьи (в месяц)
+                        </label>
+                        <div class="income-input">
+                            <input type="number" id="familyIncome" class="form-control-modern" 
+                                   min="0" step="10" placeholder="1000" required>
+                            <span class="currency">Br</span>
+                        </div>
+                        <div class="form-note" data-translate="form_income_note">
+                            Укажите средний доход на одного члена семьи в белорусских рублях
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="form-group-modern full-width">
+                        <label for="additionalInfo" data-translate="form_additional_info">Дополнительная информация</label>
+                        <textarea id="additionalInfo" class="form-control-modern" 
+                                  rows="4" placeholder="Особые пожелания, медицинские показания, другая важная информация..."
+                                  data-translate="form_additional_placeholder"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group-modern full-width" style="text-align: center; margin-top: 40px;">
+                        <button type="submit" class="btn" style="min-width: 200px;" data-translate="form_submit">
+                            Отправить заявку
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3 data-translate="footer_title">СТУДЕНЧЕСКИЙ ГОРОДОК</h3>
+                    <p data-translate="footer_description">Современное пространство для учебы, жизни и развития студентов с полным комплексом услуг и инфраструктуры.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 data-translate="footer_contacts">Контакты</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i> <span data-translate="footer_address">г. Минск, ул. Колесникова, 3</span></li>
+                        <li><i class="fas fa-phone"></i> +375 (17) 123-45-67</li>
+                        <li><i class="fas fa-envelope"></i> info@studcampus.by</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 data-translate="footer_links">Быстрые ссылки</h3>
+                    <ul class="footer-links">
+                        <li><a href="#about" data-translate="nav_about">О кампусе</a></li>
+                        <li><a href="#services" data-translate="nav_services">Услуги</a></li>
+                        <li><a href="#gallery" data-translate="nav_gallery">Галерея</a></li>
+                        <li><a href="#contact" data-translate="nav_contact">Регистрация</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 <span data-translate="footer_copyright">Студенческий городок. Все права защищены.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language translations
+        const translations = {
+            ru: {
+                // Language selector
+                currentLanguage: "Русский",
+                
+                // Navigation
+                logo: "СТУДГОРОДОК",
+                nav_about: "О кампусе",
+                nav_services: "Услуги",
+                nav_gallery: "Галерея",
+                nav_contact: "Регистрация",
+                
+                // Hero section
+                hero_title: "СТУДЕНЧЕСКИЙ\nГОРОДОК",
+                hero_description: "Современное пространство для учебы, жизни и развития. Инновационная инфраструктура, созданная для комфорта и успеха каждого студента.",
+                hero_button: "Зарегистрироваться",
+                
+                // About section
+                about_title: "О нашем кампусе",
+                about_description: "Современное образовательное пространство, где технологии встречаются с комфортом",
+                feature1_title: "Умные общежития",
+                feature1_description: "Современные комнаты с системой умного дома, индивидуальным дизайном и эргономичной мебелью для комфортного проживания",
+                feature2_title: "Образовательные пространства",
+                feature2_description: "Современные аудитории, лаборатории и коворкинги, оборудованные по последнему слову техники",
+                feature3_title: "Экологичная среда",
+                feature3_description: "Энергоэффективные здания, зеленые зоны и экологически чистые материалы для здоровой атмосферы",
+                
+                // Services section
+                services_title: "Наши услуги",
+                services_description: "Комплексный подход к организации студенческой жизни",
+                service1_title: "Цифровая инфраструктура",
+                service1_description: "Высокоскоростной интернет, облачные сервисы и цифровые образовательные платформы",
+                service2_title: "Питание",
+                service2_description: "Современные столовые и кафе с разнообразным и здоровым меню по доступным ценам",
+                service3_title: "Безопасность",
+                service3_description: "Круглосуточная охрана, система видеонаблюдения и современные системы контроля доступа",
+                service4_title: "Спорт и здоровье",
+                service4_description: "Современный спортивный комплекс, медицинский центр и зоны для активного отдыха",
+                
+                // Gallery section
+                gallery_title: "Галерея кампуса",
+                gallery_description: "Познакомьтесь с атмосферой нашего студенческого городка",
+                
+                // Student Form
+                contact_title: "Регистрация студента",
+                contact_description: "Заполните анкету для заселения в студенческий городок",
+                form_personal_info: "Личная информация",
+                form_full_name: "ФИО",
+                form_birth_date: "Дата рождения",
+                form_phone: "Номер телефона",
+                form_academic_info: "Учебная информация",
+                form_gpa: "Средний балл",
+                form_gpa_note: "От 2.0 до 5.0",
+                form_public_work: "Общественная нагрузка",
+                form_public_work_label: "Наличие общественной нагрузки",
+                form_public_work_note: "Участие в студенческих организациях, волонтерство и т.д.",
+                form_financial_info: "Финансовая информация",
+                form_family_income: "Средний доход на члена семьи (в месяц)",
+                form_income_note: "Укажите средний доход на одного члена семьи в белорусских рублях",
+                form_additional_info: "Дополнительная информация",
+                form_additional_placeholder: "Особые пожелания, медицинские показания, другая важная информация...",
+                form_submit: "Отправить заявку",
+                
+                // Footer
+                footer_title: "СТУДЕНЧЕСКИЙ ГОРОДОК",
+                footer_description: "Современное пространство для учебы, жизни и развития студентов с полным комплексом услуг и инфраструктуры.",
+                footer_contacts: "Контакты",
+                footer_address: "г. Минск, ул. Колесникова, 3",
+                footer_links: "Быстрые ссылки",
+                footer_copyright: "Студенческий городок. Все права защищены."
+            },
+            en: {
+                currentLanguage: "English",
+                logo: "STUDENT CAMPUS",
+                nav_about: "About Campus",
+                nav_services: "Services",
+                nav_gallery: "Gallery",
+                nav_contact: "Registration",
+                hero_title: "STUDENT\nCAMPUS",
+                hero_description: "Modern space for studying, living and development. Innovative infrastructure created for the comfort and success of every student.",
+                hero_button: "Register Now",
+                about_title: "About Our Campus",
+                about_description: "Modern educational space where technology meets comfort",
+                feature1_title: "Smart Dormitories",
+                feature1_description: "Modern rooms with smart home systems, individual design and ergonomic furniture for comfortable living",
+                feature2_title: "Educational Spaces",
+                feature2_description: "Modern classrooms, laboratories and coworking spaces equipped with the latest technology",
+                feature3_title: "Eco-friendly Environment",
+                feature3_description: "Energy-efficient buildings, green areas and environmentally friendly materials for a healthy atmosphere",
+                services_title: "Our Services",
+                services_description: "Comprehensive approach to student life organization",
+                service1_title: "Digital Infrastructure",
+                service1_description: "High-speed internet, cloud services and digital educational platforms",
+                service2_title: "Catering",
+                service2_description: "Modern canteens and cafes with diverse and healthy menus at affordable prices",
+                service3_title: "Security",
+                service3_description: "24/7 security, video surveillance system and modern access control systems",
+                service4_title: "Sports & Health",
+                service4_description: "Modern sports complex, medical center and active recreation areas",
+                gallery_title: "Campus Gallery",
+                gallery_description: "Get acquainted with the atmosphere of our student campus",
+                contact_title: "Student Registration",
+                contact_description: "Fill out the application form for campus accommodation",
+                form_personal_info: "Personal Information",
+                form_full_name: "Full Name",
+                form_birth_date: "Date of Birth",
+                form_phone: "Phone Number",
+                form_academic_info: "Academic Information",
+                form_gpa: "Average Grade",
+                form_gpa_note: "From 2.0 to 5.0",
+                form_public_work: "Public Activities",
+                form_public_work_label: "Participation in public activities",
+                form_public_work_note: "Participation in student organizations, volunteering, etc.",
+                form_financial_info: "Financial Information",
+                form_family_income: "Average Income per Family Member (monthly)",
+                form_income_note: "Specify the average income per family member in Belarusian rubles",
+                form_additional_info: "Additional Information",
+                form_additional_placeholder: "Special requests, medical conditions, other important information...",
+                form_submit: "Submit Application",
+                footer_title: "STUDENT CAMPUS",
+                footer_description: "Modern space for studying, living and student development with a full range of services and infrastructure.",
+                footer_contacts: "Contacts",
+                footer_address: "Minsk, Kolesnikova str., 3",
+                footer_links: "Quick Links",
+                footer_copyright: "Student Campus. All rights reserved."
+            },
+            es: {
+                currentLanguage: "Español",
+                logo: "CAMPUS ESTUDIANTIL",
+                nav_about: "Sobre el Campus",
+                nav_services: "Servicios",
+                nav_gallery: "Galería",
+                nav_contact: "Registro",
+                hero_title: "CAMPUS\nESTUDIANTIL",
+                hero_description: "Espacio moderno para estudiar, vivir y desarrollarse. Infraestructura innovadora creada para la comodidad y el éxito de cada estudiante.",
+                hero_button: "Registrarse",
+                about_title: "Sobre nuestro campus",
+                about_description: "Espacio educativo moderno donde la tecnología se encuentra con la comodidad",
+                feature1_title: "Residencias inteligentes",
+                feature1_description: "Habitaciones modernas con sistemas de domótica, diseño individual y muebles ergonómicos para una vida cómoda",
+                feature2_title: "Espacios educativos",
+                feature2_description: "Aulas modernas, laboratorios y espacios de coworking equipados con la última tecnología",
+                feature3_title: "Medio ambiente ecológico",
+                feature3_description: "Edificios energéticamente eficientes, zonas verdes y materiales ecológicos para un ambiente saludable",
+                services_title: "Nuestros servicios",
+                services_description: "Enfoque integral para la organización de la vida estudiantil",
+                service1_title: "Infraestructura digital",
+                service1_description: "Internet de alta velocidad, servicios en la nube y plataformas educativas digitales",
+                service2_title: "Alimentación",
+                service2_description: "Comedores y cafés modernos con menús diversos y saludables a precios asequibles",
+                service3_title: "Seguridad",
+                service3_description: "Vigilancia 24/7, sistema de videovigilancia y sistemas modernos de control de acceso",
+                service4_title: "Deporte y salud",
+                service4_description: "Complejo deportivo moderno, centro médico y zonas de recreo activo",
+                gallery_title: "Galería del campus",
+                gallery_description: "Conozca el ambiente de nuestro campus estudiantil",
+                contact_title: "Registro de Estudiante",
+                contact_description: "Complete el formulario de solicitud para alojamiento en el campus",
+                form_personal_info: "Información Personal",
+                form_full_name: "Nombre Completo",
+                form_birth_date: "Fecha de Nacimiento",
+                form_phone: "Número de Teléfono",
+                form_academic_info: "Información Académica",
+                form_gpa: "Promedio de Calificaciones",
+                form_gpa_note: "De 2.0 a 5.0",
+                form_public_work: "Actividades Públicas",
+                form_public_work_label: "Participación en actividades públicas",
+                form_public_work_note: "Participación en organizaciones estudiantiles, voluntariado, etc.",
+                form_financial_info: "Información Financiera",
+                form_family_income: "Ingreso Promedio por Miembro Familiar (mensual)",
+                form_income_note: "Especifique el ingreso promedio por miembro familiar en rublos bielorrusos",
+                form_additional_info: "Información Adicional",
+                form_additional_placeholder: "Solicitudes especiales, condiciones médicas, otra información importante...",
+                form_submit: "Enviar Solicitud",
+                footer_title: "CAMPUS ESTUDIANTIL",
+                footer_description: "Espacio moderno para estudiar, vivir y desarrollarse con gama completa de servicios e infraestructura.",
+                footer_contacts: "Contactos",
+                footer_address: "Minsk, calle Kolesnikova, 3",
+                footer_links: "Enlaces rápidos",
+                footer_copyright: "Campus Estudiantil. Todos los derechos reservados."
+            }
+        };
+
+        // Language management
+        let currentLang = 'ru';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const langData = translations[lang];
+            
+            // Update all elements with data-translate attribute
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (langData[key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = langData[key];
+                    } else {
+                        // Handle newlines in titles
+                        if (key === 'hero_title') {
+                            element.innerHTML = langData[key].replace('\n', '<br>');
+                        } else {
+                            element.textContent = langData[key];
+                        }
+                    }
+                }
+            });
+            
+            // Update current language display
+            document.getElementById('currentLanguage').textContent = langData.currentLanguage;
+            
+            // Save to localStorage
+            localStorage.setItem('preferredLanguage', lang);
+            
+            // Close dropdown
+            document.getElementById('languageDropdown').classList.remove('show');
+        }
+
+        // Language selector functionality
+        document.getElementById('languageBtn').addEventListener('click', function() {
+            document.getElementById('languageDropdown').classList.toggle('show');
+        });
+
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                changeLanguage(lang);
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.language-selector')) {
+                document.getElementById('languageDropdown').classList.remove('show');
+            }
+        });
+
+        // Load saved language
+        const savedLanguage = localStorage.getItem('preferredLanguage') || 'ru';
+        changeLanguage(savedLanguage);
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', function() {
+            body.classList.toggle('dark-theme');
+            
+            if (body.classList.contains('dark-theme')) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Student Form Functionality
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const fullName = document.getElementById('fullName').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const phone = document.getElementById('phone').value;
+            const gpa = document.getElementById('gpa').value;
+            const familyIncome = document.getElementById('familyIncome').value;
+            
+            if (!fullName || !birthDate || !phone || !gpa || !familyIncome) {
+                alert('Пожалуйста, заполните все обязательные поля');
+                return;
+            }
+            
+            // Collect form data
+            const formData = {
+                fullName: fullName,
+                birthDate: birthDate,
+                phone: phone,
+                gpa: parseFloat(gpa),
+                publicWork: document.getElementById('publicWork').checked,
+                familyIncome: parseFloat(familyIncome),
+                additionalInfo: document.getElementById('additionalInfo').value
+            };
+            
+            // Here you would typically send data to backend
+            console.log('Student Form Data:', formData);
+            
+            // Show success message
+            const successMessage = translations[currentLang].form_submit + ' успешно отправлена!';
+            alert(successMessage + ' Мы свяжемся с вами в ближайшее время.');
+            
+            // Reset form
+            this.reset();
+        });
+
+        // Phone number formatting for Belarus
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Belarus phone format: +375 (XX) XXX-XX-XX
+            if (value.startsWith('375')) {
+                value = value.substring(3);
+            }
+            
+            if (value.length > 0) {
+                value = '+375 (' + value;
+                if (value.length > 9) {
+                    value = value.substring(0, 9) + ') ' + value.substring(9);
+                }
+                if (value.length > 14) {
+                    value = value.substring(0, 14) + '-' + value.substring(14);
+                }
+                if (value.length > 17) {
+                    value = value.substring(0, 17) + '-' + value.substring(17, 19);
+                }
+            }
+            e.target.value = value;
+        });
+
+        // GPA validation
+        document.getElementById('gpa').addEventListener('change', function(e) {
+            const value = parseFloat(e.target.value);
+            if (value < 2.0 || value > 5.0) {
+                alert('Средний балл должен быть от 2.0 до 5.0');
+                e.target.value = '';
+            }
+        });
+
+        // Create floating elements
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            for (let i = 0; i < 8; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                const size = Math.random() * 20 + 10;
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.top = `${Math.random() * 100}%`;
+                element.style.left = `${Math.random() * 100}%`;
+                element.style.animationDelay = `${Math.random() * 10}s`;
+                element.style.animationDuration = `${15 + Math.random() * 10}s`;
+                container.appendChild(element);
+            }
+        }
+
+        createFloatingElements();
+
+        // Parallax effect
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('header');
+            if (parallax) {
+                parallax.style.backgroundPositionY = -(scrolled * 0.5) + 'px';
+            }
+        });
+        function goToStudentInfo() {
+     const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    window.location.href = `info.html?theme=${currentTheme}`;
+}
+    </script>
+</body>
+</html>
