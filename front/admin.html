@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора | Студенческий городок</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #1a1a1a;
+            --text: #000000;
+            --bg: #ffffff;
+            --card-bg: #ffffff;
+            --header-bg: rgba(255, 255, 255, 0.1);
+            --border: rgba(0, 0, 0, 0.1);
+            --shadow: rgba(0, 0, 0, 0.1);
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+
+        .dark-theme {
+            --primary: #34495e;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #2c3e50;
+            --dark: #ecf0f1;
+            --text: #ecf0f1;
+            --bg: #1a1a1a;
+            --card-bg: rgba(44, 62, 80, 0.9);
+            --header-bg: rgba(26, 26, 26, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.3);
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        .admin-header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .admin-header p {
+            text-align: center;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        /* Navigation */
+        .admin-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .back-btn {
+            background: #95a5a6;
+        }
+
+        .back-btn:hover {
+            background: #7f8c8d;
+        }
+
+        .theme-toggle {
+            background: var(--accent);
+        }
+
+        .theme-toggle:hover {
+            background: #c0392b;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px var(--shadow);
+            border-left: 5px solid var(--secondary);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .stat-card p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .stat-card.success {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.success h3 {
+            color: var(--success);
+        }
+
+        .stat-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.warning h3 {
+            color: var(--warning);
+        }
+
+        .stat-card.danger {
+            border-left-color: var(--danger);
+        }
+
+        .stat-card.danger h3 {
+            color: var(--danger);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-select {
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px var(--shadow);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit, .btn-delete, .btn-view {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-edit {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #e67e22;
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .btn-view {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #2980b9;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .filter-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 10px 5px;
+            }
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <div class="container">
+        <!-- Header -->
+        <header class="admin-header">
+            <h1><i class="fas fa-user-shield"></i> Панель администратора</h1>
+            <p>Управление студентами и общежитиями</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="admin-nav">
+            <div class="nav-buttons">
+                <button class="nav-btn back-btn" onclick="goToMainPage()">
+                    <i class="fas fa-arrow-left"></i> На главную
+                </button>
+                <button class="nav-btn" onclick="showAddStudentModal()">
+                    <i class="fas fa-user-plus"></i> Добавить студента
+                </button>
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i> Сменить тему
+                </button>
+            </div>
+        </nav>
+
+        <!-- Statistics -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>154</h3>
+                <p>Всего студентов</p>
+            </div>
+            <div class="stat-card success">
+                <h3>142</h3>
+                <p>Заселены</p>
+            </div>
+            <div class="stat-card warning">
+                <h3>8</h3>
+                <p>Ожидают заселения</p>
+            </div>
+            <div class="stat-card danger">
+                <h3>4</h3>
+                <p>Нарушители</p>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Поиск студентов...">
+            </div>
+            <div class="filter-controls">
+                <select class="filter-select" id="dormitoryFilter">
+                    <option value="">Все общежития</option>
+                    <option value="D-001">D-001</option>
+                    <option value="D-002">D-002</option>
+                    <option value="D-003">D-003</option>
+                </select>
+                <select class="filter-select" id="statusFilter">
+                    <option value="">Все статусы</option>
+                    <option value="active">Заселен</option>
+                    <option value="pending">Ожидает</option>
+                    <option value="violation">Нарушитель</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Students Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ФИО</th>
+                        <th>Телефон</th>
+                        <th>Общежитие</th>
+                        <th>Комната</th>
+                        <th>Средний балл</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTable">
+                    <!-- Данные будут загружены через JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add/Edit Student Modal -->
+        <div class="modal" id="studentModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Добавить студента</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="studentForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">ФИО</label>
+                                <input type="text" id="fullName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Телефон</label>
+                                <input type="tel" id="phone" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="birthDate">Дата рождения</label>
+                                <input type="date" id="birthDate" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gpa">Средний балл</label>
+                                <input type="number" id="gpa" class="form-control" min="2.0" max="5.0" step="0.1" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dormitory">Общежитие</label>
+                                <select id="dormitory" class="form-control" required>
+                                    <option value="">Выберите общежитие</option>
+                                    <option value="D-001">D-001</option>
+                                    <option value="D-002">D-002</option>
+                                    <option value="D-003">D-003</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="room">Комната</label>
+                                <input type="text" id="room" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="familyIncome">Доход на члена семьи (руб.)</label>
+                            <input type="number" id="familyIncome" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Статус</label>
+                            <select id="status" class="form-control" required>
+                                <option value="active">Заселен</option>
+                                <option value="pending">Ожидает заселения</option>
+                                <option value="violation">Нарушитель</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="socialWork"> Общественная нагрузка
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Примечания</label>
+                            <textarea id="notes" class="form-control" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="nav-btn back-btn" onclick="closeModal()">Отмена</button>
+                    <button class="nav-btn" id="saveStudentBtn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Данные студентов (в реальном приложении будут загружаться с сервера)
+        let students = [
+            {
+                id: 1,
+                fullName: "Иванов Иван Иванович",
+                phone: "+7 (999) 123-45-67",
+                birthDate: "2000-03-15",
+                checkInDate: "2023-09-01",
+                checkOutDate: "2024-06-30",
+                dormitoryId: "D-001",
+                roomId: "D-001-305",
+                averageScore: 4.5,
+                socialWork: true,
+                familyIncome: 25000,
+                status: "active"
+            },
+            {
+                id: 2,
+                fullName: "Петрова Анна Сергеевна",
+                phone: "+7 (999) 987-65-43",
+                birthDate: "2001-07-22",
+                checkInDate: "2023-09-01",
+                checkOutDate: "2024-06-30",
+                dormitoryId: "D-002",
+                roomId: "D-002-208",
+                averageScore: 4.8,
+                socialWork: false,
+                familyIncome: 18000,
+                status: "active"
+            },
+            {
+                id: 3,
+                fullName: "Сидоров Алексей Петрович",
+                phone: "+7 (999) 456-78-90",
+                birthDate: "1999-11-10",
+                checkInDate: "2023-09-01",
+                checkOutDate: "2024-06-30",
+                dormitoryId: "D-001",
+                roomId: "D-001-412",
+                averageScore: 4.2,
+                socialWork: true,
+                familyIncome: 22000,
+                status: "violation"
+            },
+            {
+                id: 4,
+                fullName: "Козлова Мария Дмитриевна",
+                phone: "+7 (999) 111-22-33",
+                birthDate: "2000-05-18",
+                checkInDate: "",
+                checkOutDate: "",
+                dormitoryId: "",
+                roomId: "",
+                averageScore: 4.7,
+                socialWork: true,
+                familyIncome: 21000,
+                status: "pending"
+            }
+        ];
+
+        // Тема оформления
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        const savedTheme = localStorage.getItem('adminTheme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i> Сменить тему';
+        }
+        
+        themeToggle.addEventListener('click', function() {
+            body.classList.toggle('dark-theme');
+            
+            if (body.classList.contains('dark-theme')) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i> Сменить тему';
+                localStorage.setItem('adminTheme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i> Сменить тему';
+                localStorage.setItem('adminTheme', 'light');
+            }
+        });
+
+        // Загрузка данных в таблицу
+        function loadStudentsTable() {
+            const tableBody = document.getElementById('studentsTable');
+            tableBody.innerHTML = '';
+            
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const dormitoryFilter = document.getElementById('dormitoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            const filteredStudents = students.filter(student => {
+                const matchesSearch = student.fullName.toLowerCase().includes(searchTerm) || 
+                                     student.phone.includes(searchTerm);
+                const matchesDormitory = !dormitoryFilter || student.dormitoryId === dormitoryFilter;
+                const matchesStatus = !statusFilter || student.status === statusFilter;
+                
+                return matchesSearch && matchesDormitory && matchesStatus;
+            });
+            
+            filteredStudents.forEach(student => {
+                const row = document.createElement('tr');
+                
+                let statusText = '';
+                let statusClass = '';
+                
+                switch(student.status) {
+                    case 'active':
+                        statusText = 'Заселен';
+                        statusClass = 'success';
+                        break;
+                    case 'pending':
+                        statusText = 'Ожидает';
+                        statusClass = 'warning';
+                        break;
+                    case 'violation':
+                        statusText = 'Нарушитель';
+                        statusClass = 'danger';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.fullName}</td>
+                    <td>${student.phone}</td>
+                    <td>${student.dormitoryId || '-'}</td>
+                    <td>${student.roomId || '-'}</td>
+                    <td>${student.averageScore}</td>
+                    <td><span class="${statusClass}">${statusText}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-view" onclick="viewStudent(${student.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-edit" onclick="editStudent(${student.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-delete" onclick="deleteStudent(${student.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Модальное окно
+        const modal = document.getElementById('studentModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const saveStudentBtn = document.getElementById('saveStudentBtn');
+        let currentEditingId = null;
+
+        function showAddStudentModal() {
+            currentEditingId = null;
+            modalTitle.textContent = 'Добавить студента';
+            document.getElementById('studentForm').reset();
+            modal.style.display = 'flex';
+        }
+
+        function viewStudent(id) {
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+            
+            currentEditingId = id;
+            modalTitle.textContent = 'Просмотр студента';
+            
+            // Заполняем форму данными
+            document.getElementById('fullName').value = student.fullName;
+            document.getElementById('phone').value = student.phone;
+            document.getElementById('birthDate').value = student.birthDate;
+            document.getElementById('gpa').value = student.averageScore;
+            document.getElementById('dormitory').value = student.dormitoryId;
+            document.getElementById('room').value = student.roomId;
+            document.getElementById('familyIncome').value = student.familyIncome;
+            document.getElementById('status').value = student.status;
+            document.getElementById('socialWork').checked = student.socialWork;
+            document.getElementById('notes').value = student.notes || '';
+            
+            // Делаем поля только для чтения
+            const formControls = document.querySelectorAll('.form-control, #socialWork');
+            formControls.forEach(control => control.disabled = true);
+            
+            saveStudentBtn.style.display = 'none';
+            modal.style.display = 'flex';
+        }
+
+        function editStudent(id) {
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+            
+            currentEditingId = id;
+            modalTitle.textContent = 'Редактировать студента';
+            
+            // Заполняем форму данными
+            document.getElementById('fullName').value = student.fullName;
+            document.getElementById('phone').value = student.phone;
+            document.getElementById('birthDate').value = student.birthDate;
+            document.getElementById('gpa').value = student.averageScore;
+            document.getElementById('dormitory').value = student.dormitoryId;
+            document.getElementById('room').value = student.roomId;
+            document.getElementById('familyIncome').value = student.familyIncome;
+            document.getElementById('status').value = student.status;
+            document.getElementById('socialWork').checked = student.socialWork;
+            document.getElementById('notes').value = student.notes || '';
+            
+            // Разблокируем поля
+            const formControls = document.querySelectorAll('.form-control, #socialWork');
+            formControls.forEach(control => control.disabled = false);
+            
+            saveStudentBtn.style.display = 'block';
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            
+            // Разблокируем поля на случай следующего открытия
+            const formControls = document.querySelectorAll('.form-control, #socialWork');
+            formControls.forEach(control => control.disabled = false);
+            
+            saveStudentBtn.style.display = 'block';
+        }
+
+        function deleteStudent(id) {
+            if (confirm('Вы уверены, что хотите удалить этого студента?')) {
+                students = students.filter(student => student.id !== id);
+                loadStudentsTable();
+            }
+        }
+
+        // Сохранение студента
+        saveStudentBtn.addEventListener('click', function() {
+            const form = document.getElementById('studentForm');
+            
+            if (!form.checkValidity()) {
+                alert('Пожалуйста, заполните все обязательные поля');
+                return;
+            }
+            
+            const studentData = {
+                fullName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                birthDate: document.getElementById('birthDate').value,
+                averageScore: parseFloat(document.getElementById('gpa').value),
+                dormitoryId: document.getElementById('dormitory').value,
+                roomId: document.getElementById('room').value,
+                familyIncome: parseInt(document.getElementById('familyIncome').value),
+                status: document.getElementById('status').value,
+                socialWork: document.getElementById('socialWork').checked,
+                notes: document.getElementById('notes').value
+            };
+            
+            if (currentEditingId) {
+                // Редактирование существующего студента
+                const index = students.findIndex(s => s.id === currentEditingId);
+                if (index !== -1) {
+                    students[index] = { ...students[index], ...studentData };
+                }
+            } else {
+                // Добавление нового студента
+                const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+                students.push({
+                    id: newId,
+                    checkInDate: studentData.status === 'active' ? new Date().toISOString().split('T')[0] : '',
+                    checkOutDate: '',
+                    ...studentData
+                });
+            }
+            
+            loadStudentsTable();
+            closeModal();
+        });
+
+        // Поиск и фильтрация
+        document.getElementById('searchInput').addEventListener('input', loadStudentsTable);
+        document.getElementById('dormitoryFilter').addEventListener('change', loadStudentsTable);
+        document.getElementById('statusFilter').addEventListener('change', loadStudentsTable);
+
+        // Навигация
+        function goToMainPage() {
+            window.location.href = 'сайт главная.html';
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudentsTable();
+        });
+    </script>
+</body>
+</html>

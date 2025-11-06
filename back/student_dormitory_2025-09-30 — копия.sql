@@ -66,7 +66,7 @@ LOCK TABLES `students` WRITE;
 
 INSERT INTO `students` (`student_id`, `full_name`, `date_of_birth`, `phone_number`, `average_grade`, `has_public_work`, `family_income_per_member`)
 VALUES
-	(1,'Иванов Иван Иванович','2000-05-15','+79991234567',4.50,1,25000.00);
+	(1,'Эва','2000-05-15','+79991234567',4.50,1,25000.00);
 
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
