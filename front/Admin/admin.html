@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора - Общежития</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="StyleAdmin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>Панель управления общежитиями</h1>
+            <div class="admin-nav">
+                <button class="nav-btn active" onclick="showSection('queue')">
+                    <i class="fas fa-list-ol"></i> Очередь
+                </button>
+                <button class="nav-btn" onclick="showSection('dormitories')">
+                    <i class="fas fa-building"></i> Общежития
+                </button>
+                <button class="nav-btn" onclick="showSection('residents')">
+                    <i class="fas fa-users"></i> Заселенные
+                </button>
+                <button class="nav-btn" onclick="showSection('reports')">
+                    <i class="fas fa-chart-bar"></i> Отчеты
+                </button>
+                <button class="nav-btn" onclick="goBack()" style="background: #95a5a6;">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+            </div>
+        </header>
+
+        <!-- Секция очереди -->
+        <section id="queue-section" class="section active">
+            <h2>Очередь на заселение</h2>
+            <div class="filters">
+                <select id="dormFilter" onchange="loadQueue()">
+                    <option value="">Все типы</option>
+                    <option value="family">Семейные</option>
+                    <option value="single">Несемейные</option>
+                </select>
+                <select id="statusFilter" onchange="loadQueue()">
+                    <option value="pending">В ожидании</option>
+                    <option value="approved">Одобренные</option>
+                    <option value="all">Все</option>
+                </select>
+                <button onclick="loadQueue()" class="nav-btn">
+                    <i class="fas fa-sync-alt"></i> Обновить
+                </button>
+            </div>
+            <div id="queueList" class="queue-list">
+                <!-- Динамически заполняется -->
+            </div>
+        </section>
+
+        <!-- Секция управления общежитиями -->
+        <section id="dormitories-section" class="section">
+            <h2>Управление общежитиями</h2>
+            <div class="filters">
+                <button onclick="loadDormitories()" class="nav-btn">
+                    <i class="fas fa-sync-alt"></i> Обновить список
+                </button>
+            </div>
+            <div id="dormitoriesList" class="dormitories-grid">
+                <!-- Динамически заполняется -->
+            </div>
+        </section>
+
+        <!-- Секция заселенных студентов -->
+        <section id="residents-section" class="section">
+            <h2>Заселенные студенты</h2>
+            <div class="filters">
+                <select id="residentDormFilter" onchange="loadResidents()">
+                    <option value="">Все общежития</option>
+                </select>
+                <button onclick="loadResidents()" class="nav-btn">
+                    <i class="fas fa-sync-alt"></i> Обновить
+                </button>
+            </div>
+            <div id="residentsList" class="queue-list">
+                <!-- Динамически заполняется -->
+            </div>
+        </section>
+
+        <!-- Секция отчетов -->
+        <section id="reports-section" class="section">
+            <h2>Отчеты и статистика</h2>
+            <div class="reports-grid">
+                <div class="report-card" onclick="generateVacancyReport()">
+                    <h3><i class="fas fa-bed"></i> Свободные места</h3>
+                    <div id="vacancyStats">Нажмите для генерации отчета</div>
+                </div>
+                <div class="report-card" onclick="generateQueueReport()">
+                    <h3><i class="fas fa-list-ol"></i> Статистика очереди</h3>
+                    <div id="queueStats">Нажмите для генерации отчета</div>
+                </div>
+                <div class="report-card" onclick="generateSettlementReport()">
+                    <h3><i class="fas fa-chart-line"></i> Статистика заселения</h3>
+                    <div id="settlementStats">Нажмите для генерации отчета</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="FunctionAdmin.js"></script>
+</body>
+</html>

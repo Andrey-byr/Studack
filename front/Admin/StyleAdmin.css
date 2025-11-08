@@ -1,0 +1,351 @@
+/* StyleAdmin.css */
+:root {
+    --bg-color: #f5f5f5;
+    --text-color: #333;
+    --container-bg: white;
+    --border-color: #ddd;
+    --button-bg: #3498db;
+    --button-hover: #2980b9;
+    --card-bg: white;
+    --shadow: 0 0 10px rgba(0,0,0,0.1);
+    --success: #2ecc71;
+    --warning: #f39c12;
+    --danger: #e74c3c;
+}
+
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #e0e0e0;
+    --container-bg: #2d2d2d;
+    --border-color: #444;
+    --button-bg: #2980b9;
+    --button-hover: #3498db;
+    --card-bg: #3d3d3d;
+    --shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+* {
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.admin-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-header {
+    background: var(--container-bg);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.admin-header h1 {
+    margin: 0 0 20px 0;
+    color: var(--text-color);
+    font-size: 2.5rem;
+}
+
+.admin-nav {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    background: var(--button-bg);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: var(--button-hover);
+    transform: translateY(-2px);
+}
+
+.nav-btn.active {
+    background: var(--success);
+}
+
+.section {
+    display: none;
+    background: var(--container-bg);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+
+.section.active {
+    display: block;
+}
+
+.section h2 {
+    margin-top: 0;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+/* Фильтры */
+.filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filters select, .filters input {
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Очередь */
+.queue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.queue-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.queue-item:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow);
+}
+
+.queue-rank {
+    background: var(--button-bg);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.student-info {
+    flex: 1;
+}
+
+.student-info strong {
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.queue-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.queue-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-settle {
+    background: var(--success);
+    color: white;
+}
+
+.btn-reject {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-settle:hover, .btn-reject:hover {
+    transform: translateY(-2px);
+}
+
+/* Приоритеты */
+.priority-high {
+    border-left: 4px solid var(--success);
+}
+
+.priority-medium {
+    border-left: 4px solid var(--warning);
+}
+
+.priority-low {
+    border-left: 4px solid var(--danger);
+}
+
+/* Отчеты */
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.report-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.report-card h3 {
+    margin-top: 0;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+/* Таблицы */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.report-table th, .report-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.report-table th {
+    background: var(--button-bg);
+    color: white;
+    font-weight: 600;
+}
+
+.report-table tr:hover {
+    background: rgba(52, 152, 219, 0.1);
+}
+
+.high-vacancy {
+    color: var(--success);
+    font-weight: bold;
+}
+
+.low-vacancy {
+    color: var(--danger);
+    font-weight: bold;
+}
+
+/* Общежития */
+.dormitories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+.dorm-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.dorm-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+}
+
+.dorm-card h3 {
+    margin-top: 0;
+    color: var(--text-color);
+}
+
+.dorm-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 15px;
+    background: var(--bg-color);
+    border-radius: 8px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--button-bg);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .admin-nav {
+        flex-direction: column;
+    }
+    
+    .queue-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .queue-actions {
+        align-self: stretch;
+        justify-content: space-between;
+    }
+    
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dorm-stats {
+        grid-template-columns: 1fr;
+    }
+}

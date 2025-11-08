@@ -16,7 +16,7 @@ const pool = mysql2.createPool({
     password: 'Andrei123!'
 });
 
-// API endpoint для получения студентов
+
 app.get('/get/students', function(req, res) {
         pool.query('SELECT * FROM students').then(function(data){
             let InfStudents=data[0]
@@ -49,6 +49,19 @@ app.post('/add/students',(req,res)=>{
          ).catch((error)=>{
             console.log(`ошибки ${error} `)
             res.send("Двнные не получены")
+         })
+})
+
+app.post('/delete/students',(req,res)=>{
+    const id=req.body;
+    pool.query(`DELETE FROM students WHERE id=${id}`).then(
+            ()=>{
+                console.log('Пользователь успешно покинул бд ');
+                res.send("Студент удален")
+            }
+         ).catch((error)=>{
+            console.log(`ошибки ${error} `)
+            res.send("Студент удален")
          })
 })
 

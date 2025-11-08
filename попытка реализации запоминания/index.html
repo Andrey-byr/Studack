@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запоминание устройства</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .device-status {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .new-device {
+            background-color: #ffe6e6;
+            border: 1px solid #ffcccc;
+        }
+
+        .recognized-device {
+            background-color: #e6ffe6;
+            border: 1px solid #ccffcc;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="deviceStatus" class="device-status">
+        Проверяем ваше устройство...
+    </div>
+
+    <button onclick="forgetDevice()">Забыть это устройство</button>
+
+    <script>
+        // Функция для создания уникального идентификатора устройства
+        function generateDeviceId() {
+            return 'device-' + Math.random().toString(36).substr(2, 16) + 
+                   '-' + Date.now().toString(36);
+        }
+
+        // Функция получения идентификатора устройства
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('deviceId');
+            
+            if (!deviceId) {
+                deviceId = generateDeviceId();
+                localStorage.setItem('deviceId', deviceId);
+                localStorage.setItem('isNewDevice', 'true');
+            } else {
+                localStorage.setItem('isNewDevice', 'false');
+            }
+            
+            return deviceId;
+        }
+
+        // Функция проверки статуса устройства
+        function checkDeviceStatus() {
+            const deviceId = getDeviceId();
+            const isNewDevice = localStorage.getItem('isNewDevice') === 'true';
+            const statusElement = document.getElementById('deviceStatus');
+
+            if (isNewDevice) {
+                statusElement.textContent = 'Это новое устройство! Добро пожаловать!';
+                statusElement.className = 'device-status new-device';
+                
+                // Здесь можно выполнить действия для нового устройства
+                // Например, показать инструкции, специальное предложение и т.д.
+                
+            } else {
+                statusElement.textContent = `Рады снова видеть ваше устройство! ID: ${deviceId}`;
+                statusElement.className = 'device-status recognized-device';
+                
+                // Здесь можно выполнить действия для узнанного устройства
+                // Например, автоматически войти в систему, восстановить настройки и т.д.
+            }
+        }
+
+        // Функция "забыть" устройство
+        function forgetDevice() {
+            localStorage.removeItem('deviceId');
+            localStorage.removeItem('isNewDevice');
+            location.reload();
+        }
+
+        // Проверяем статус при загрузке страницы
+        document.addEventListener('DOMContentLoaded', checkDeviceStatus);
+    </script>
+</body>
+</html>

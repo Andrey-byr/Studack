@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статус заявки - Общежитие</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="StyleStatus.css">
+</head>
+<body class="light-theme">
+    <!-- Top Controls -->
+    <div class="top-controls">
+        <div class="nav-buttons">
+            <button class="nav-btn back-btn" onclick="goToMainPage()">
+                <i class="fas fa-arrow-left"></i>
+                <span>На главную</span>
+            </button>
+            <button class="nav-btn info-btn" onclick="goToApplicationPage()">
+                <i class="fas fa-edit"></i>
+                <span>Новая заявка</span>
+            </button>
+        </div>
+        
+        <div class="right-controls">
+            <div class="language-selector">
+                <button class="language-btn" id="languageBtn">
+                    <i class="fas fa-globe"></i>
+                    <span id="currentLanguage">Русский</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="language-dropdown" id="languageDropdown">
+                    <div class="language-option" data-lang="ru">
+                        <img src="https://flagcdn.com/w40/by.png" class="language-flag" alt="Russian">
+                        Русский
+                    </div>
+                    <div class="language-option" data-lang="en">
+                        <img src="https://flagcdn.com/w40/gb.png" class="language-flag" alt="English">
+                        English
+                    </div>
+                    <div class="language-option" data-lang="es">
+                        <img src="https://flagcdn.com/w40/es.png" class="language-flag" alt="Spanish">
+                        Español
+                    </div>
+                </div>
+            </div>
+
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="status-header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Статус вашей заявки</h1>
+                <p>Проверьте текущее положение в очереди на заселение</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Status Section -->
+    <section class="section-modern section-with-bg">
+        <div class="container">
+            <div class="status-container">
+                <div id="statusContent">
+                    <div class="loading-status">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Загрузка статуса заявки...</p>
+                    </div>
+                </div>
+                
+                <div class="queue-section">
+                    <h3>Текущая очередь на заселение</h3>
+                    <div id="queueList" class="queue-list">
+                        <!-- Очередь будет загружена здесь -->
+                    </div>
+                </div>
+                
+                <div class="status-actions">
+                    <button class="btn btn-secondary" onclick="refreshStatus()">
+                        <i class="fas fa-sync-alt"></i> Обновить статус
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="FunctionStatus.js"></script>
+</body>
+</html>

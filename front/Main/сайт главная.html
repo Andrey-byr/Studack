@@ -65,14 +65,14 @@
                     <li><a href="#about" data-translate="nav_about">О кампусе</a></li>
                     <li><a href="#services" data-translate="nav_services">Услуги</a></li>
                     <li><a href="#gallery" data-translate="nav_gallery">Галерея</a></li>
-                    <li><a href="#contact" data-translate="nav_contact">Регистрация</a></li>
                 </ul>
             </nav>
             
             <div class="hero">
                 <h1 data-translate="hero_title">СТУДЕНЧЕСКИЙ<br>ГОРОДОК</h1>
                 <p data-translate="hero_description">Современное пространство для учебы, жизни и развития. Инновационная инфраструктура, созданная для комфорта и успеха каждого студента.</p>
-                <a href="#contact" class="btn" data-translate="hero_button">Зарегистрироваться</a>
+                <button class="btn" onclick="goToStudentApplication()">Подать заявку в общежитие</button>
+                <button class="aut" onclick="goToLogin()">Войти в систему</button>
             </div>
         </div>
     </header>
@@ -178,87 +178,6 @@
                 <div class="gallery-item-modern">
                     <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Территория">
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="section-modern section-with-bg contact-section" id="contact">
-        <div class="container">
-            <div class="section-title-modern">
-                <h2 data-translate="contact_title">Регистрация студента</h2>
-                <p data-translate="contact_description">Заполните анкету для заселения в студенческий городок</p>
-            </div>
-            
-            <div class="student-form-modern">
-                <form id="studentForm">
-                    <!-- Personal Information Section -->
-                    <h3 class="form-section-title" data-translate="form_personal_info">Личная информация</h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group-modern">
-                            <label for="fullName" class="label-required" data-translate="form_full_name">ФИО</label>
-                            <input type="text" id="fullName" class="form-control-modern" required 
-                                   placeholder="Иванов Иван Иванович">
-                        </div>
-                        
-                        <div class="form-group-modern">
-                            <label for="birthDate" class="label-required" data-translate="form_birth_date">Дата рождения</label>
-                            <input type="date" id="birthDate" class="form-control-modern" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group-modern">
-                        <label for="phone" class="label-required" data-translate="form_phone">Номер телефона</label>
-                        <input type="tel" id="phone" class="form-control-modern" required
-                               placeholder="+375 (29) 123-45-67">
-                    </div>
-
-                    <!-- Academic Information Section -->
-                    <h3 class="form-section-title" data-translate="form_academic_info">Учебная информация</h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group-modern">
-                            <label for="gpa" class="label-required" data-translate="form_gpa">Средний балл</label>
-                            <input type="number" id="gpa" class="form-control-modern" required 
-                                   min="2.0" max="10.0" step="0.1" placeholder="4.5">
-                            <div class="form-note" data-translate="form_gpa_note">От 2.0 до 10.0</div>
-                        </div>
-                        
-                        <div class="form-group-modern">
-                            <label data-translate="form_public_work">Общественная нагрузка</label>
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="publicWork" name="publicWork">
-                                <label for="publicWork" data-translate="form_public_work_label">Наличие общественной нагрузки</label>
-                            </div>
-                            <div class="form-note" data-translate="form_public_work_note">Участие в студенческих организациях, волонтерство и т.д.</div>
-                        </div>
-                    </div>
-
-                    <!-- Financial Information Section -->
-                    <h3 class="form-section-title" data-translate="form_financial_info">Финансовая информация</h3>
-                    
-                    <div class="form-group-modern">
-                        <label for="familyIncome" class="label-required" data-translate="form_family_income">
-                            Средний доход на члена семьи (в месяц)
-                        </label>
-                        <div class="income-input">
-                            <input type="number" id="familyIncome" class="form-control-modern" 
-                                   min="0" step="10" placeholder="1000" required>
-                            <span class="currency">Br</span>
-                        </div>
-                        <div class="form-note" data-translate="form_income_note">
-                            Укажите средний доход на одного члена семьи в белорусских рублях
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="form-group-modern full-width" style="text-align: center; margin-top: 40px;">
-                        <button type="submit" class="btn" style="min-width: 200px;" data-translate="form_submit">
-                            Отправить заявку
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
     </section>

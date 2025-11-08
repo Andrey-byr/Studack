@@ -17,6 +17,7 @@ const translations = {
         hero_title: "СТУДЕНЧЕСКИЙ\nГОРОДОК",
         hero_description: "Современное пространство для учебы, жизни и развития. Инновационная инфраструктура, созданная для комфорта и успеха каждого студента.",
         hero_button: "Зарегистрироваться",
+        hero_button2: "Авторизация",
         
         // About section
         about_title: "О нашем кампусе",
@@ -82,6 +83,7 @@ const translations = {
         hero_title: "STUDENT\nCAMPUS",
         hero_description: "Modern space for studying, living and development. Innovative infrastructure created for the comfort and success of every student.",
         hero_button: "Register Now",
+        hero_button2:"authorization",
         about_title: "About Our Campus",
         about_description: "Modern educational space where technology meets comfort",
         feature1_title: "Smart Dormitories",
@@ -137,6 +139,7 @@ const translations = {
         hero_title: "CAMPUS\nESTUDIANTIL",
         hero_description: "Espacio moderno para estudiar, vivir y desarrollarse. Infraestructura innovadora creada para la comodidad y el éxito de cada estudiante.",
         hero_button: "Registrarse",
+        hero_button2: "autorización",
         about_title: "Sobre nuestro campus",
         about_description: "Espacio educativo moderno donde la tecnología se encuentra con la comodidad",
         feature1_title: "Residencias inteligentes",
@@ -391,6 +394,11 @@ window.addEventListener('scroll', function() {
     }
 });
 function goToStudentInfo() {
-const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-window.location.href = `info.html?theme=${currentTheme}`;
+    window.location.href = `../Info/info.html`
+}
+function goToStudentApplication(){
+    window.location.href = `../Application/application.html`
+}
+function goToLogin(){
+    window.location.href = `../Login/login.html`
 }

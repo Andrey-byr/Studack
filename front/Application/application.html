@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подача заявки в общежитие</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="StyleApplication.css">
+</head>
+<body class="light-theme">
+    <!-- Top Controls -->
+    <div class="top-controls">
+        <div class="nav-buttons">
+            <button class="nav-btn back-btn" onclick="goToMainPage()">
+                <i class="fas fa-arrow-left"></i>
+                <span data-translate="btn_back">На главную</span>
+            </button>
+            <button class="nav-btn info-btn" onclick="goToStudentInfo()">
+                <i class="fas fa-info-circle"></i>
+                <span data-translate="btn_status">Статус заявки</span>
+            </button>
+        </div>
+        
+        <div class="right-controls">
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <button class="language-btn" id="languageBtn">
+                    <i class="fas fa-globe"></i>
+                    <span id="currentLanguage">Русский</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="language-dropdown" id="languageDropdown">
+                    <div class="language-option" data-lang="ru">
+                        <img src="https://flagcdn.com/w40/by.png" class="language-flag" alt="Russian">
+                        Русский
+                    </div>
+                    <div class="language-option" data-lang="en">
+                        <img src="https://flagcdn.com/w40/gb.png" class="language-flag" alt="English">
+                        English
+                    </div>
+                    <div class="language-option" data-lang="es">
+                        <img src="https://flagcdn.com/w40/es.png" class="language-flag" alt="Spanish">
+                        Español
+                    </div>
+                </div>
+            </div>
+
+            <!-- Theme Toggle Button -->
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="application-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 data-translate="application_title">Подача заявки в общежитие</h1>
+                <p data-translate="application_description">Заполните анкету для рассмотрения вашей заявки на заселение в студенческий городок</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Application Form -->
+    <section class="section-modern section-with-bg contact-section" id="contact">
+        <div class="container">
+            <div class="section-title-modern">
+                <h2 data-translate="contact_title">Регистрация студента</h2>
+                <p data-translate="contact_description">Заполните анкету для заселения в студенческий городок</p>
+            </div>
+            
+            <div class="student-form-modern">
+                <form id="studentForm">
+                    <!-- Personal Information Section -->
+                    <h3 class="form-section-title" data-translate="form_personal_info">Личная информация</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group-modern">
+                            <label for="fullName" class="label-required" data-translate="form_full_name">ФИО</label>
+                            <input type="text" id="fullName" class="form-control-modern" required 
+                                   placeholder="Иванов Иван Иванович">
+                        </div>
+                        
+                        <div class="form-group-modern">
+                            <label for="birthDate" class="label-required" data-translate="form_birth_date">Дата рождения</label>
+                            <input type="date" id="birthDate" class="form-control-modern" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label for="phone" class="label-required" data-translate="form_phone">Номер телефона</label>
+                        <input type="tel" id="phone" class="form-control-modern" required
+                               placeholder="+375 (29) 123-45-67">
+                    </div>
+
+                    <!-- Academic Information Section -->
+                    <h3 class="form-section-title" data-translate="form_academic_info">Учебная информация</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group-modern">
+                            <label for="gpa" class="label-required" data-translate="form_gpa">Средний балл</label>
+                            <input type="number" id="gpa" class="form-control-modern" required 
+                                   min="2.0" max="10.0" step="0.1" placeholder="4.5">
+                            <div class="form-note" data-translate="form_gpa_note">От 2.0 до 10.0</div>
+                        </div>
+                        
+                        <div class="form-group-modern">
+                            <label data-translate="form_public_work">Общественная нагрузка</label>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="publicWork" name="publicWork">
+                                <label for="publicWork" data-translate="form_public_work_label">Наличие общественной нагрузки</label>
+                            </div>
+                            <div class="form-note" data-translate="form_public_work_note">Участие в студенческих организациях, волонтерство и т.д.</div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Information Section -->
+                    <h3 class="form-section-title" data-translate="form_financial_info">Финансовая информация</h3>
+                    
+                    <div class="form-group-modern">
+                        <label for="familyIncome" class="label-required" data-translate="form_family_income">
+                            Средний доход на члена семьи (в месяц)
+                        </label>
+                        <div class="income-input">
+                            <input type="number" id="familyIncome" class="form-control-modern" 
+                                   min="0" step="10" placeholder="1000" required>
+                            <span class="currency">Br</span>
+                        </div>
+                        <div class="form-note" data-translate="form_income_note">
+                            Укажите средний доход на одного члена семьи в белорусских рублях
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group-modern full-width" style="text-align: center; margin-top: 40px;">
+                        <button type="submit" class="btn" style="min-width: 200px;" data-translate="form_submit">
+                            Отправить заявку
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 data-translate="success_title">Заявка успешно отправлена!</h2>
+            <div class="modal-priority">
+                <strong data-translate="priority_text">Ваш приоритет в очереди: <span id="finalPriority">0%</span></strong>
+                <p id="priorityDescription" data-translate="priority_low">Низкий приоритет</p>
+            </div>
+            <p data-translate="success_message">Ваша заявка принята в обработку. Мы свяжемся с вами при наличии свободных мест.</p>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="goToMainPage()" data-translate="btn_main">На главную</button>
+                <button class="btn btn-secondary" onclick="closeModal()" data-translate="btn_another">Подать еще одну заявку</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="FunctionApplication.js"></script>
+</body>
+</html>
