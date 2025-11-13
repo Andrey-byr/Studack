@@ -16,7 +16,7 @@ const pool = mysql2.createPool({
     password: 'Andrei123!'
 });
 
-
+// Вывод информации о студенте в
 app.get('/get/students', function(req, res) {
         pool.query('SELECT * FROM students').then(function(data){
             let InfStudents=data[0]
@@ -37,14 +37,38 @@ app.get('/get/students', function(req, res) {
 });
 
 
+
+// Информация студента  
 app.post('/add/students',(req,res)=>{
-    const { fullName, birthDate, phone, gpa, publicWork, familyIncome } = req.body;
+    const { fullName, birthDate, phone, gpa, publicWork,familyIncome} = req.body;
     pool.query(`INSERT INTO students
         (full_name,date_of_birth,phone_number,average_grade,has_public_work,family_income_per_member)
         VALUES (?,?,?,?,?,?)`,[fullName, birthDate, phone, gpa, publicWork, familyIncome]).then(
             ()=>{
                 console.log('Пользователь успешно добавлен ');
-                res.send("Двнные получены")
+                res.send("Данные добавлены")
+            }
+         ).catch((error)=>{
+            console.log(`ошибки ${error} `)
+            res.send("Двнные не получены")
+         })
+})
+
+app.post('/add/application',(req,res)=>{
+    const {date,type}=req.body;
+    const [studentRows] = pool.query('SELECT student_id FROM students ORDER BY id DESC LIMIT 1');
+    const studentId = studentRows[0].lastStudentId;
+    
+    if (!studentId) {
+        console.log("Нет студентов в базе данных");
+        return ;
+    }
+    pool.query(`INSERT INTO applications
+        (ap[lication_date,desired_dormitory_type,student_id])
+        VALUES (?,?,?)`,[date,type,studentId]).then(
+            ()=>{
+                console.log('Заявка успешно добавлена ');
+                res.send("Заявка добавлена")
             }
          ).catch((error)=>{
             console.log(`ошибки ${error} `)

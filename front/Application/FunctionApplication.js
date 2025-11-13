@@ -17,18 +17,22 @@ const applicationTranslations = {
         form_public_work: "Общественная нагрузка",
         form_public_work_label: "Наличие общественной нагрузки",
         form_public_work_note: "Участие в студенческих организациях, волонтерство и т.д.",
+        form_dormitory_type: "Тип общежития",
+        form_dormitory_type_label: "Выберите тип общежития",
+        form_regular_dorm: "Обычное общежитие",
+        form_family_dorm: "Семейное общежитие",
+        form_dormitory_note: "Семейное общежитие предназначено для студентов, состоящих в браке",
         form_financial_info: "Финансовая информация",
         form_family_income: "Средний доход на члена семьи (в месяц)",
         form_income_note: "Укажите средний доход на одного члена семьи в белорусских рублях",
         form_submit: "Отправить заявку",
-        success_title: "Заявка успешно отправлена!",
-        priority_text: "Ваш приоритет в очереди:",
-        priority_low: "Низкий приоритет",
-        priority_medium: "Средний приоритет",
-        priority_high: "Высокий приоритет",
-        success_message: "Ваша заявка принята в обработку. Мы свяжемся с вами при наличии свободных мест.",
-        btn_main: "На главную",
-        btn_another: "Подать еще одну заявку"
+        error_required: "Пожалуйста, заполните все обязательные поля",
+        error_gpa_range: "Средний балл должен быть от 2.0 до 10.0",
+        error_future_date: "Дата рождения не может быть в будущем",
+        error_negative_income: "Доход не может быть отрицательным",
+        error_full_name: "Введите полное ФИО (минимум имя и фамилию)",
+        error_server: "Ошибка при отправке заявки",
+        success_submit: "Заявка успешно отправлена!"
     },
     en: {
         btn_back:"to the main",
@@ -47,18 +51,22 @@ const applicationTranslations = {
         form_public_work: "Public Activities",
         form_public_work_label: "Participation in public activities",
         form_public_work_note: "Participation in student organizations, volunteering, etc.",
+        form_dormitory_type: "Dormitory Type",
+        form_dormitory_type_label: "Select dormitory type",
+        form_regular_dorm: "Regular Dormitory",
+        form_family_dorm: "Family Dormitory",
+        form_dormitory_note: "Family dormitory is intended for married students",
         form_financial_info: "Financial Information",
         form_family_income: "Average Income per Family Member (monthly)",
         form_income_note: "Specify the average income per family member in Belarusian rubles",
         form_submit: "Submit Application",
-        success_title: "Application Submitted Successfully!",
-        priority_text: "Your queue priority:",
-        priority_low: "Low priority",
-        priority_medium: "Medium priority",
-        priority_high: "High priority",
-        success_message: "Your application has been accepted for processing. We will contact you when places become available.",
-        btn_main: "To Main Page",
-        btn_another: "Submit Another Application"
+        error_required: "Please fill in all required fields",
+        error_gpa_range: "Average grade must be from 2.0 to 10.0",
+        error_future_date: "Birth date cannot be in the future",
+        error_negative_income: "Income cannot be negative",
+        error_full_name: "Please enter full name (at least first and last name)",
+        error_server: "Error submitting application",
+        success_submit: "Application submitted successfully!"
     },
     es: {
         btn_back:"Inicio",
@@ -77,18 +85,22 @@ const applicationTranslations = {
         form_public_work: "Actividades Públicas",
         form_public_work_label: "Participación en actividades públicas",
         form_public_work_note: "Participación en organizaciones estudiantiles, voluntariado, etc.",
+        form_dormitory_type: "Tipo de Residencia",
+        form_dormitory_type_label: "Seleccione el tipo de residencia",
+        form_regular_dorm: "Residencia Regular",
+        form_family_dorm: "Residencia Familiar",
+        form_dormitory_note: "La residencia familiar está destinada a estudiantes casados",
         form_financial_info: "Información Financiera",
         form_family_income: "Ingreso Promedio por Miembro Familiar (mensual)",
         form_income_note: "Especifique el ingreso promedio por miembro familiar en rublos bielorrusos",
         form_submit: "Enviar Solicitud",
-        success_title: "¡Solicitud Enviada Exitosamente!",
-        priority_text: "Su prioridad en la cola:",
-        priority_low: "Prioridad baja",
-        priority_medium: "Prioridad media",
-        priority_high: "Prioridad alta",
-        success_message: "Su solicitud ha sido aceptada para procesamiento. Nos contactaremos con usted cuando haya plazas disponibles.",
-        btn_main: "A la Página Principal",
-        btn_another: "Enviar Otra Solicitud"
+        error_required: "Por favor, complete todos los campos obligatorios",
+        error_gpa_range: "El promedio debe ser de 2.0 a 10.0",
+        error_future_date: "La fecha de nacimiento no puede ser en el futuro",
+        error_negative_income: "El ingreso no puede ser negativo",
+        error_full_name: "Por favor ingrese nombre completo (al menos nombre y apellido)",
+        error_server: "Error al enviar la solicitud",
+        success_submit: "¡Solicitud enviada con éxito!"
     }
 };
 
@@ -117,6 +129,13 @@ function setupEventListeners() {
         gpaInput.addEventListener('change', validateGPA);
     }
     
+    // Добавляем обработчики для очистки ошибок при вводе
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.addEventListener('input', () => clearFieldError(input.id));
+        input.addEventListener('focus', () => clearFieldError(input.id));
+    });
+    
     const languageBtn = document.getElementById('languageBtn');
     if (languageBtn) {
         languageBtn.addEventListener('click', toggleLanguageDropdown);
@@ -128,6 +147,13 @@ function setupEventListeners() {
     }
     
     document.addEventListener('click', closeLanguageDropdown);
+    
+    document.querySelectorAll('.language-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang');
+            changeLanguage(lang);
+        });
+    });
 }
 
 function toggleLanguageDropdown(e) {
@@ -235,60 +261,134 @@ function formatPhoneNumber(e) {
 function validateGPA(e) {
     const value = parseFloat(e.target.value);
     if (value < 2.0 || value > 10.0) {
-        alert(currentLang === 'ru' ? 'Средний балл должен быть от 2.0 до 10.0' : 
-              currentLang === 'en' ? 'Average grade must be from 2.0 to 10.0' : 
-              'El promedio debe ser de 2.0 a 10.0');
+        showFieldError('gpa', applicationTranslations[currentLang].error_gpa_range);
         e.target.value = '';
-        e.target.focus();
+    } else {
+        clearFieldError('gpa');
     }
 }
 
-function calculatePriority() {
-    const income = parseFloat(document.getElementById('familyIncome')?.value) || 0;
-    const gpa = parseFloat(document.getElementById('gpa')?.value) || 0;
-    const hasPublicWork = document.getElementById('publicWork')?.checked || false;
+
+
+// Функция для показа ошибки поля
+function showFieldError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    if (!field) return;
     
-    const incomeWeight = 0.5;
-    const gradeWeight = 0.3;
-    const activityBonus = 0.2;
+    // Добавляем класс ошибки
+    field.classList.add('field-error');
     
-    const maxIncome = 5000;
-    const normalizedIncome = Math.max(0, 1 - (income / maxIncome));
-    const normalizedGrade = Math.max(0, (gpa - 2.0) / 8.0);
-    const activityPoints = hasPublicWork ? activityBonus : 0;
+    // Показываем сообщение об ошибке
+    showMessage(message, 'error');
     
-    const priority = (normalizedIncome * incomeWeight) + 
-                    (normalizedGrade * gradeWeight) + 
-                    activityPoints;
+    // Фокусируемся на поле с ошибкой
+    field.focus();
+}
+
+// Функция для очистки ошибки поля
+function clearFieldError(fieldId) {
+    const field = document.getElementById(fieldId);
+    if (field) {
+        field.classList.remove('field-error');
+    }
+}
+
+// Очистка всех ошибок
+function clearAllErrors() {
+    const errorFields = document.querySelectorAll('.field-error');
+    errorFields.forEach(field => field.classList.remove('field-error'));
+}
+
+// Функция для показа сообщений
+function showMessage(message, type) {
+    // Удаляем существующие сообщения
+    const existingMessage = document.querySelector('.application-message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
     
-    return Math.min(1, Math.max(0, priority));
+    // Создаем новое сообщение
+    const messageEl = document.createElement('div');
+    messageEl.className = `application-message application-message-${type}`;
+    messageEl.textContent = message;
+    
+    // Добавляем в тело документа
+    document.body.appendChild(messageEl);
+    
+    // Автоматическое удаление через 5 секунд
+    setTimeout(() => {
+        if (messageEl.parentNode) {
+            messageEl.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (messageEl.parentNode) {
+                    messageEl.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
 }
 
 async function submitApplication(e) {
     e.preventDefault();
     
+    // Очищаем предыдущие ошибки
+    clearAllErrors();
+    
+    let hasErrors = false;
+    let firstErrorField = null;
+    
+    // Проверка обязательных полей
     const requiredFields = ['fullName', 'birthDate', 'phone', 'gpa', 'familyIncome'];
     for (let field of requiredFields) {
         const element = document.getElementById(field);
         if (!element.value.trim()) {
-            alert(currentLang === 'ru' ? 'Пожалуйста, заполните все обязательные поля' :
-                  currentLang === 'en' ? 'Please fill in all required fields' :
-                  'Por favor, complete todos los campos obligatorios');
-            element.focus();
-            return;
+            if (!firstErrorField) firstErrorField = field;
+            showFieldError(field, applicationTranslations[currentLang].error_required);
+            hasErrors = true;
         }
     }
     
-    const gpaValue = parseFloat(document.getElementById('gpa').value);
-    if (gpaValue < 2.0 || gpaValue > 10.0) {
-        alert(currentLang === 'ru' ? 'Средний балл должен быть от 2.0 до 10.0' : 
-              currentLang === 'en' ? 'Average grade must be from 2.0 to 10.0' : 
-              'El promedio debe ser de 2.0 a 10.0');
+    if (hasErrors) {
+        if (firstErrorField) {
+            document.getElementById(firstErrorField).focus();
+        }
         return;
     }
     
-    const finalPriority = calculatePriority();
-    const priorityPercent = Math.round(finalPriority * 100);
+    // Проверка GPA
+    const gpaValue = parseFloat(document.getElementById('gpa').value);
+    if (gpaValue < 2.0 || gpaValue > 10.0) {
+        showFieldError('gpa', applicationTranslations[currentLang].error_gpa_range);
+        document.getElementById('gpa').focus();
+        return;
+    }
+    
+    // Проверка даты рождения (не будущее время)
+    const birthDate = new Date(document.getElementById('birthDate').value);
+    const today = new Date();
+    if (birthDate > today) {
+        showFieldError('birthDate', applicationTranslations[currentLang].error_future_date);
+        document.getElementById('birthDate').focus();
+        return;
+    }
+    
+    // Проверка дохода (не отрицательный)
+    const incomeValue = parseFloat(document.getElementById('familyIncome').value);
+    if (incomeValue < 0) {
+        showFieldError('familyIncome', applicationTranslations[currentLang].error_negative_income);
+        document.getElementById('familyIncome').focus();
+        return;
+    }
+    
+    // Проверка ФИО (минимум 2 слова)
+    const fullName = document.getElementById('fullName').value.trim();
+    if (fullName.split(' ').length < 2) {
+        showFieldError('fullName', applicationTranslations[currentLang].error_full_name);
+        document.getElementById('fullName').focus();
+        return;
+    }
+    
+    const dormitoryType = document.querySelector('input[name="dormitoryType"]:checked').value;
     
     const formData = {
         fullName: document.getElementById('fullName').value,
@@ -296,73 +396,53 @@ async function submitApplication(e) {
         phone: document.getElementById('phone').value,
         gpa: gpaValue,
         publicWork: document.getElementById('publicWork').checked,
-        familyIncome: parseFloat(document.getElementById('familyIncome').value),
-        priority: finalPriority,
-        applicationDate: new Date().toISOString(),
-        status: 'pending'
+        familyIncome: incomeValue
     };
-    
+
     try {
-        const response = await fetch('http://127.0.0.1:2000/add/students', {
+        // Сначала добавляем студента и получаем его ID
+        const responseStudent = await fetch('http://127.0.0.1:2000/add/students', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(formData)
         });
-        
-        if (response.ok) {
-            showSuccessModal(priorityPercent);
+
+        const studentResult = await responseStudent.json();
+
+        if (studentResult.success) {
+            const formApplication = {
+                date: new Date().toISOString().split('T')[0], 
+                type: dormitoryType === 'family' ? "Семейное" : "Обычное",
+                studentId: studentResult.studentId
+            };
+
+            const responseApplication = await fetch('http://127.0.0.1:2000/add/application', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(formApplication)
+            });
+
+            const applicationResult = await responseApplication.json();
+
+            if (applicationResult.success) {
+                // Показываем сообщение об успехе
+                 
+                // Ждем немного перед переходом
+                setTimeout(() => {
+                    goToStudentInfo();
+                }, 1500);
+            } else {
+                showMessage(applicationTranslations[currentLang].error_server, 'error');
+            }
         } else {
-            throw new Error('Server error: ' + response.status);
+            showMessage(applicationTranslations[currentLang].error_server, 'error');
         }
     } catch (error) {
         console.error('Error submitting application:', error);
-        showSuccessModal(priorityPercent);
+        showMessage(applicationTranslations[currentLang].error_server, 'error');
     }
 }
 
-function showSuccessModal(priorityPercent) {
-    const modal = document.getElementById('successModal');
-    const finalPriorityElement = document.getElementById('finalPriority');
-    const priorityDescriptionElement = document.getElementById('priorityDescription');
-    
-    if (finalPriorityElement) {
-        finalPriorityElement.textContent = priorityPercent + '%';
-    }
-    
-    let description;
-    let descriptionKey;
-    if (priorityPercent >= 70) {
-        description = applicationTranslations[currentLang].priority_high;
-        descriptionKey = 'priority_high';
-    } else if (priorityPercent >= 40) {
-        description = applicationTranslations[currentLang].priority_medium;
-        descriptionKey = 'priority_medium';
-    } else {
-        description = applicationTranslations[currentLang].priority_low;
-        descriptionKey = 'priority_low';
-    }
-    
-    if (priorityDescriptionElement) {
-        priorityDescriptionElement.textContent = description;
-        priorityDescriptionElement.setAttribute('data-translate', descriptionKey);
-    }
-    
-    if (modal) {
-        modal.classList.add('show');
-    }
-}
-
-function closeModal() {
-    const modal = document.getElementById('successModal');
-    if (modal) {
-        modal.classList.remove('show');
-    }
-    
-    const form = document.getElementById('studentForm');
-    if (form) {
-        form.reset();
-    }
-}
 
 function goToMainPage() {
     try {
@@ -378,7 +458,7 @@ function goToMainPage() {
 
 function goToStudentInfo() {
     try {
-        window.location.href = '../Info/info.html';
+        window.location.href = '../Queue/queue.html';
     } catch (error) {
         const link = document.createElement('a');
         link.href = '../Info/info.html';
@@ -389,10 +469,3 @@ function goToStudentInfo() {
 }
 
 document.addEventListener('DOMContentLoaded', initApplicationPage);
-
-document.querySelectorAll('.language-option').forEach(option => {
-    option.addEventListener('click', function() {
-        const lang = this.getAttribute('data-lang');
-        changeLanguage(lang);
-    });
-});

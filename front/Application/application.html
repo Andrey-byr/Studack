@@ -16,10 +16,6 @@
                 <i class="fas fa-arrow-left"></i>
                 <span data-translate="btn_back">На главную</span>
             </button>
-            <button class="nav-btn info-btn" onclick="goToStudentInfo()">
-                <i class="fas fa-info-circle"></i>
-                <span data-translate="btn_status">Статус заявки</span>
-            </button>
         </div>
         
         <div class="right-controls">
@@ -79,19 +75,19 @@
                     <div class="form-row">
                         <div class="form-group-modern">
                             <label for="fullName" class="label-required" data-translate="form_full_name">ФИО</label>
-                            <input type="text" id="fullName" class="form-control-modern" required 
+                            <input type="text" id="fullName" class="form-control-modern"  
                                    placeholder="Иванов Иван Иванович">
                         </div>
                         
                         <div class="form-group-modern">
                             <label for="birthDate" class="label-required" data-translate="form_birth_date">Дата рождения</label>
-                            <input type="date" id="birthDate" class="form-control-modern" required>
+                            <input type="date" id="birthDate" class="form-control-modern" >
                         </div>
                     </div>
 
                     <div class="form-group-modern">
                         <label for="phone" class="label-required" data-translate="form_phone">Номер телефона</label>
-                        <input type="tel" id="phone" class="form-control-modern" required
+                        <input type="tel" id="phone" class="form-control-modern" 
                                placeholder="+375 (29) 123-45-67">
                     </div>
 
@@ -101,7 +97,7 @@
                     <div class="form-row">
                         <div class="form-group-modern">
                             <label for="gpa" class="label-required" data-translate="form_gpa">Средний балл</label>
-                            <input type="number" id="gpa" class="form-control-modern" required 
+                            <input type="number" id="gpa" class="form-control-modern"  
                                    min="2.0" max="10.0" step="0.1" placeholder="4.5">
                             <div class="form-note" data-translate="form_gpa_note">От 2.0 до 10.0</div>
                         </div>
@@ -116,6 +112,24 @@
                         </div>
                     </div>
 
+                    <!-- Dormitory Type Section -->
+                    <h3 class="form-section-title" data-translate="form_dormitory_type">Тип общежития</h3>
+                    
+                    <div class="form-group-modern">
+                        <label class="label-required" data-translate="form_dormitory_type_label">Выберите тип общежития</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="regularDorm" name="dormitoryType" value="regular" checked>
+                                <label for="regularDorm" data-translate="form_regular_dorm">Обычное общежитие</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="familyDorm" name="dormitoryType" value="family">
+                                <label for="familyDorm" data-translate="form_family_dorm">Семейное общежитие</label>
+                            </div>
+                        </div>
+                        <div class="form-note" data-translate="form_dormitory_note">Семейное общежитие предназначено для студентов, состоящих в браке</div>
+                    </div>
+
                     <!-- Financial Information Section -->
                     <h3 class="form-section-title" data-translate="form_financial_info">Финансовая информация</h3>
                     
@@ -125,7 +139,7 @@
                         </label>
                         <div class="income-input">
                             <input type="number" id="familyIncome" class="form-control-modern" 
-                                   min="0" step="10" placeholder="1000" required>
+                                   min="0" step="1" placeholder="1000" >
                             <span class="currency">Br</span>
                         </div>
                         <div class="form-note" data-translate="form_income_note">
@@ -135,7 +149,7 @@
 
                     <!-- Submit Button -->
                     <div class="form-group-modern full-width" style="text-align: center; margin-top: 40px;">
-                        <button type="submit" class="btn" style="min-width: 200px;" data-translate="form_submit">
+                        <button type="submit" class="btn" style="min-width: 200px;" data-translate="form_submit" >
                             Отправить заявку
                         </button>
                     </div>
@@ -143,25 +157,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Success Modal -->
-    <div id="successModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h2 data-translate="success_title">Заявка успешно отправлена!</h2>
-            <div class="modal-priority">
-                <strong data-translate="priority_text">Ваш приоритет в очереди: <span id="finalPriority">0%</span></strong>
-                <p id="priorityDescription" data-translate="priority_low">Низкий приоритет</p>
-            </div>
-            <p data-translate="success_message">Ваша заявка принята в обработку. Мы свяжемся с вами при наличии свободных мест.</p>
-            <div class="modal-actions">
-                <button class="btn btn-primary" onclick="goToMainPage()" data-translate="btn_main">На главную</button>
-                <button class="btn btn-secondary" onclick="closeModal()" data-translate="btn_another">Подать еще одну заявку</button>
-            </div>
-        </div>
-    </div>
 
     <script src="FunctionApplication.js"></script>
 </body>

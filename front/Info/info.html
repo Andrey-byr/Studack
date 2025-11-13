@@ -3,44 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Информация о студентах</title>
+    <title>Информация об общежитиях | Студенческий городок</title>
+
+    <!-- Используем те же библиотеки, что и на главной странице -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Используем обновленный стиль -->
     <link rel="stylesheet" href="StyleInfo.css">
 </head>
-<body>
-    <div class="container">
-        <div class="navigation">
-            <button class="nav-btn back-btn" onclick="goBack()">
-                Назад
-            </button>
-            
-            <div class="theme-controls">
-                <button class="nav-btn theme-btn" onclick="toggleTheme()" id="themeBtn">
-                    Сменить тему
-                </button>
+<body class="light-theme">
+    <!-- Language Selector - как на главной странице -->
+    <div class="language-selector">
+        <button class="language-btn" id="languageBtn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">Русский</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+            <div class="language-option" data-lang="ru">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPn03Mtoz4KbghToztL5htiKUZoSoQHVopow&s" class="language-flag" alt="Belarusian">
+                Русский
+            </div>
+            <div class="language-option" data-lang="en">
+                <img src="https://flagcdn.com/w40/gb.png" class="language-flag" alt="English">
+                English
+            </div>
+            <div class="language-option" data-lang="es">
+                <img src="https://flagcdn.com/w40/es.png" class="language-flag" alt="Spanish">
+                Español
             </div>
         </div>
+    </div>
 
-        <div class="header-image"></div>
-        
-        <h1>Информация о студентах</h1>
-        
-        <div class="button-container">
-            <button class="nav-btn fetch-btn" onclick="fetchStudentInfo()">
-                Получить информацию о студентах
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Верхняя панель управления -->
+    <div class="top-controls">
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="goBack()" data-translate="back_button">
+                <i class="fas fa-arrow-left"></i>
+                Назад
             </button>
         </div>
-        
-        <div id="loading" class="loading">
-            <div class="loading-spinner"></div>
-            Загрузка данных...
-        </div>
-        
-        <div id="error" class="error"></div>
-        
-        <div id="studentInfo" class="student-info">
-            <!-- Информация о студентах будет загружена здесь после нажатия кнопки -->
-        </div>
     </div>
+
+    <!-- Заголовок в стиле главной страницы -->
+    <header class="status-header">
+        <!-- Плавающие элементы -->
+        <div class="floating-elements" id="floatingElements"></div>
+
+        <div class="container">
+            <div class="header-content">
+                <h1 data-translate="header_title">Информация об общежитиях</h1>
+                <p data-translate="header_subtitle">Актуальные данные о доступности комнат в реальном времени</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <section class="section-modern section-with-bg">
+        <div class="container">
+            <div class="section-title-modern">
+                <h2 data-translate="dorm_info_title">Статус общежитий</h2>
+                <p data-translate="dorm_info_description">Получите актуальную информацию о доступных комнатах</p>
+            </div>
+
+            <button class="btn" onclick="fetchDormInfo()" data-translate="fetch_button">
+                <i class="fas fa-sync-alt"></i>
+                Обновить информацию
+            </button>
+
+            <div id="loading" class="loading-status">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span data-translate="loading_text">Загрузка данных...</span>
+            </div>
+
+            <div id="error" class="error"></div>
+
+            <div id="dormInfo" class="features-grid">
+                <!-- Данные будут вставлены JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer - как на главной странице -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3 data-translate="footer_title">СТУДЕНЧЕСКИЙ ГОРОДОК</h3>
+                    <p data-translate="footer_description">Современное пространство для учебы, жизни и развития студентов с полным комплексом услуг и инфраструктуры.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 data-translate="footer_contacts">Контакты</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i> <span data-translate="footer_address">г. Минск, ул. Колесникова, 3</span></li>
+                        <li><i class="fas fa-phone"></i> +375 (17) 123-45-67</li>
+                        <li><i class="fas fa-envelope"></i> info@studcampus.by</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 data-translate="footer_links">Быстрые ссылки</h3>
+                    <ul class="footer-links">
+                        <li><a href="../Main/сайт главная.html#about" data-translate="nav_about">О кампусе</a></li>
+                        <li><a href="../Main/сайт главная.html#services" data-translate="nav_services">Услуги</a></li>
+                        <li><a href="../Main/сайт главная.html#gallery" data-translate="nav_gallery">Галерея</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 <span data-translate="footer_copyright">Студенческий городок. Все права защищены.</span></p>
+            </div>
+        </div>
+    </footer>
 
     <script src="FunctionInfo.js"></script>
 </body>

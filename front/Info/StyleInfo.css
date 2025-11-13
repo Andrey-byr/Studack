@@ -1,222 +1,774 @@
-
+/* Темы и корневые переменные - полностью идентично главной странице */
 :root {
-    --bg-color: #f5f5f5;
-    --text-color: #333;
-    --container-bg: white;
-    --border-color: #ddd;
-    --button-bg: #3498db;
-    --button-hover: #2980b9;
-    --card-bg: white;
-    --shadow: 0 0 10px rgba(0,0,0,0.1);
+    --primary: #2c3e50;
+    --secondary: #3498db;
+    --accent: #e74c3c;
+    --light: #ecf0f1;
+    --dark: #1a1a1a;
+    --text: #000000;
+    --bg: #ffffff;
+    --card-bg: #ffffff;
+    --header-bg: rgba(255, 255, 255, 0.1);
+    --border: rgba(0, 0, 0, 0.1);
+    --shadow: rgba(0, 0, 0, 0.1);
 }
 
-[data-theme="dark"] {
-    --bg-color: #1a1a1a;
-    --text-color: #e0e0e0;
-    --container-bg: #2d2d2d;
-    --border-color: #444;
-    --button-bg: #2980b9;
-    --button-hover: #3498db;
-    --card-bg: #3d3d3d;
-    --shadow: 0 0 10px rgba(0,0,0,0.3);
+.dark-theme {
+    --primary: #34495e;
+    --secondary: #3498db;
+    --accent: #e74c3c;
+    --light: #2c3e50;
+    --dark: #ecf0f1;
+    --text: #ecf0f1;
+    --bg: #1a1a1a;
+    --card-bg: rgba(44, 62, 80, 0.9);
+    --header-bg: rgba(26, 26, 26, 0.9);
+    --border: rgba(255, 255, 255, 0.1);
+    --shadow: rgba(0, 0, 0, 0.3);
 }
 
+/* Сброс и базовые стили - полностью идентично главной странице */
 * {
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.3s;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
 }
 
 .container {
+    width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    background-color: var(--container-bg);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: var(--shadow);
+    padding: 0 15px;
 }
 
-.header-image {
-    width: 100%;
-    height: 250px;
-    background-image: url('https://i.pinimg.com/736x/fb/96/37/fb9637e6c048495a9e670c540d1fcc1c.jpg');
-    background-size: cover;
-    background-position: center;
-    border-radius: 10px;
-    margin-bottom: 20px;
+/* Language Selector - как на главной */
+.language-selector {
+    position: fixed;
+    top: 20px;
+    right: 80px;
+    z-index: 1000;
 }
 
-h1 {
-    color: var(--text-color);
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 28px;
-}
-
-.button-container {
-    text-align: center;
-    margin: 30px 0;
-}
-
-.nav-btn {
-    background-color: var(--button-bg);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    font-size: 16px;
+.language-btn {
+    background: var(--card-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    margin: 5px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    box-shadow: 0 2px 10px var(--shadow);
 }
 
-.nav-btn:hover {
-    background-color: var(--button-hover);
+.language-btn:hover {
+    background: var(--secondary);
+    color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-.nav-btn:active {
-    transform: translateY(0);
-}
-
-.back-btn {
-    background-color: #95a5a6;
-}
-
-.back-btn:hover {
-    background-color: #7f8c8d;
-}
-
-.fetch-btn {
-    background-color: #3498db;
-    padding: 15px 30px;
-    font-size: 18px;
-}
-
-.fetch-btn:hover {
-    background-color: #3498db;
-}
-
-.theme-btn {
-    background-color: #3498db;
-    padding: 10px 20px;
-    font-size: 14px;
-}
-
-.theme-btn:hover {
-    background-color: #3498db;
-}
-
-.student-info {
-    display: none;
-    margin-top: 30px;
-}
-
-.student-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-}
-
-.student-card h3 {
-    color: var(--text-color);
-    margin-top: 0;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 10px;
-}
-
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.info-item {
-    padding: 12px;
-    background-color: var(--container-bg);
+.language-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    border: 1px solid var(--border-color);
+    margin-top: 5px;
+    min-width: 150px;
+    box-shadow: 0 5px 15px var(--shadow);
+    display: none;
+    z-index: 1001;
 }
 
-.info-label {
-    font-weight: bold;
-    color: var(--text-color);
+.language-dropdown.show {
     display: block;
-    margin-bottom: 5px;
 }
 
-.info-value {
-    color: var(--text-color);
+.language-option {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.loading {
-    text-align: center;
-    color: var(--text-color);
-    font-style: italic;
-    padding: 40px;
-    display: none;
+.language-option:hover {
+    background: var(--secondary);
+    color: white;
 }
 
-.loading-spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+.language-flag {
+    width: 20px;
+    height: 15px;
+    border-radius: 2px;
+}
+
+/* Theme Toggle Button - идентично главной странице */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: var(--secondary);
+    color: white;
+    border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 2s linear infinite;
-    margin: 0 auto 20px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px var(--shadow);
+    transition: all 0.3s;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.theme-toggle:hover {
+    transform: rotate(30deg);
+    background: #2980b9;
 }
 
-.error {
-    color: #e74c3c;
-    text-align: center;
-    padding: 20px;
-    background-color: #ffeaea;
-    border-radius: 8px;
-    border: 1px solid #e74c3c;
-    display: none;
-}
-
-.navigation {
+/* Верхняя панель навигации */
+.top-controls {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    padding: 20px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 10px var(--shadow);
+    z-index: 100;
 }
 
-.theme-controls {
+.nav-buttons {
     display: flex;
-    gap: 10px;
+    gap: 15px;
+    margin-left: 20px;
+}
+
+.nav-btn {
+    background: var(--secondary);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    overflow: hidden;
+    display: flex;
     align-items: center;
+    gap: 8px;
+}
+
+.nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.nav-btn:hover::before {
+    left: 100%;
+}
+
+.nav-btn:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--shadow);
+}
+
+/* Header - полностью в стиле главной страницы */
+.status-header {
+    background: 
+        linear-gradient(135deg, rgba(44, 62, 80, 0.85) 0%, rgba(52, 73, 94, 0.75) 100%),
+        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: white;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 80px;
+}
+
+.dark-theme .status-header {
+    background: 
+        linear-gradient(135deg, rgba(26, 26, 26, 0.85) 0%, rgba(44, 62, 80, 0.75) 100%),
+        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+}
+
+.header-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.header-content h1 {
+    font-size: 4rem;
+    margin-bottom: 25px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header-content p {
+    font-size: 1.4rem;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+    line-height: 1.8;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Section Modern - идентично главной странице */
+.section-modern {
+    padding: 100px 0;
+    position: relative;
+}
+
+.section-with-bg {
+    background: 
+        linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+        url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2064&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.section-with-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.92);
+    z-index: 0;
+}
+
+.dark-theme .section-with-bg::before {
+    background: rgba(26, 26, 26, 0.92);
+}
+
+.dark-theme .section-with-bg {
+    background: 
+        linear-gradient(rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.9)),
+        url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2064&q=80');
+}
+
+.section-with-bg .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Section Title Modern - идентично главной странице */
+.section-title-modern {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-title-modern h2 {
+    font-size: 3rem;
+    color: var(--text);
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title-modern h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--secondary), var(--accent));
+    border-radius: 2px;
+}
+
+.section-title-modern p {
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--text);
+    font-size: 1.2rem;
+    opacity: 0.8;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Кнопка - идентично главной странице */
+.btn {
+    display: inline-block;
+    background: var(--secondary);
+    color: white;
+    padding: 18px 45px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto 40px auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    background: #2980b9;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Features Grid - как на главной странице */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+    position: relative;
+    z-index: 1;
+}
+
+.feature-modern {
+    background: var(--card-bg);
+    padding: 40px 30px;
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s;
+    box-shadow: 0 10px 30px var(--shadow);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--secondary), var(--accent));
+}
+
+.feature-modern:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--shadow);
+}
+
+.feature-icon-modern {
+    font-size: 3rem;
+    margin-bottom: 25px;
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.feature-modern h3 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+    color: var(--text);
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.feature-modern p {
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Карточки общежитий в стиле feature-modern */
+.dorm-card {
+    background: var(--card-bg);
+    padding: 40px 30px;
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s;
+    box-shadow: 0 10px 30px var(--shadow);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+
+.dorm-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--secondary), var(--accent));
+}
+
+.dorm-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px var(--shadow);
+}
+
+.dorm-icon {
+    font-size: 3rem;
+    margin-bottom: 25px;
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dorm-type {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 15px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dorm-rooms {
+    font-size: 1.3rem;
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.dorm-rooms strong {
+    color: var(--accent);
+    font-size: 1.5rem;
+}
+
+.dorm-capacity {
+    font-size: 1.1rem;
+    color: var(--text);
+    opacity: 0.8;
+    font-style: italic;
+}
+
+/* Loading Status */
+.loading-status {
+    text-align: center;
+    padding: 50px;
+    color: var(--text);
+    display: none;
+    font-size: 1.3rem;
+}
+
+.loading-status i {
+    font-size: 3rem;
+    color: var(--secondary);
+    margin-bottom: 20px;
+    display: block;
+}
+
+/* Error Message */
+.error {
+    display: none;
+    padding: 30px;
+    background: #ffe6e6;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    font-family: 'Inter', sans-serif;
+}
+
+.dark-theme .error {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: #e74c3c;
+}
+
+/* Footer - идентично главной странице */
+footer {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+    color: white;
+    padding: 80px 0 30px;
+    position: relative;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-column h3 {
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+    color: var(--secondary);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.footer-links a:hover {
+    color: var(--secondary);
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    transition: all 0.3s;
+    font-size: 1.2rem;
+}
+
+.social-links a:hover {
+    background: var(--secondary);
+    transform: translateY(-3px);
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Дополнительные современные элементы - идентично главной странице */
+.floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-element {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: float-random 15s infinite linear;
+}
+
+@keyframes float-random {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(20px, 40px) rotate(90deg);
+    }
+    50% {
+        transform: translate(0, 80px) rotate(180deg);
+    }
+    75% {
+        transform: translate(-20px, 40px) rotate(270deg);
+    }
+    100% {
+        transform: translate(0, 0) rotate(360deg);
+    }
+}
+
+/* Адаптивность - идентично главной странице */
+@media (max-width: 1200px) {
+    .header-content h1 {
+        font-size: 3.5rem;
+    }
+    
+    .section-title-modern h2 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .header-content h1 {
+        font-size: 3rem;
+    }
+    
+    .header-content p {
+        font-size: 1.2rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
-    .navigation {
-        flex-direction: column;
-        gap: 15px;
+    .header-content h1 {
+        font-size: 2.5rem;
     }
     
-    .theme-controls {
-        justify-content: center;
+    .header-content p {
+        font-size: 1.1rem;
     }
     
-    .info-grid {
-        grid-template-columns: 1fr;
+    .btn {
+        padding: 15px 35px;
+        font-size: 1.1rem;
+    }
+    
+    .nav-btn {
+        padding: 12px 25px;
+        font-size: 0.9rem;
+    }
+    
+    .theme-toggle {
+        top: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .language-selector {
+        top: 15px;
+        right: 70px;
+    }
+    
+    .section-title-modern h2 {
+        font-size: 2.2rem;
+    }
+    
+    .section-modern {
+        padding: 70px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content h1 {
+        font-size: 2rem;
+        letter-spacing: 2px;
+    }
+    
+    .header-content p {
+        font-size: 1rem;
+    }
+    
+    .btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+    
+    .nav-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .section-title-modern h2 {
+        font-size: 1.8rem;
+    }
+    
+    .language-btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .feature-modern,
+    .dorm-card {
+        padding: 30px 20px;
+    }
+    
+    .dorm-type {
+        font-size: 1.5rem;
+    }
+    
+    .dorm-rooms {
+        font-size: 1.1rem;
     }
 }

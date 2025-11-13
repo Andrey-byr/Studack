@@ -38,12 +38,46 @@
         <i class="fas fa-moon"></i>
     </button>
 
-    <div class="nav-item">
-    <button class="theme-button student-info-btn" onclick="goToStudentInfo()">
+<!-- Navigation Items Container -->
+<div class="nav-items-container">
+    <button class="nav-btn student-info-btn" onclick="goToStudentInfo()">
         <span class="btn-icon">🎓</span>
-        Информация о студентах
+        <span data-translate="information_about_studant">Информация об очереди</span>
     </button>
+    
+    <button class="nav-btn student-info-btn" onclick="ModalOpen()">
+        <span class="btn-icon">📋</span>
+        <span data-translate="status_application">Статус заявки</span>
+    </button>
+</div>
+
+<!-- Модальное окно для проверки данных -->
+<div class="modal-overlay" id="verificationModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-translate="verification_title">Проверка данных</h2>
+            <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="verification-info">
+                <div class="form-group-modern">
+                    <label class="info-label" for="inputName" data-translate="verification_name">Имя:</label>
+                    <input type="text" id="inputName" class="form-control-modern" placeholder="Амего">
+                </div>
+                <div class="form-group-modern">
+                    <label class="info-label" for="inputAge" data-translate="verification_age">Возраст:</label>
+                    <input type="number" id="inputAge" class="form-control-modern" placeholder="Введите ваш возраст" min="1" max="100">
+                </div>
+            </div>
+            
+            <div class="verification-actions">
+                <button class="btn btn-secondary" id="cancelVerification" data-translate="verification_cancel">Отмена</button>
+                <button class="btn btn-primary" id="confirmVerification" data-translate="verification_confirm">Подтвердить</button>
+            </div>
+        </div>
     </div>
+</div>
 
     <!-- Header & Hero Section -->
     <header>
@@ -71,8 +105,8 @@
             <div class="hero">
                 <h1 data-translate="hero_title">СТУДЕНЧЕСКИЙ<br>ГОРОДОК</h1>
                 <p data-translate="hero_description">Современное пространство для учебы, жизни и развития. Инновационная инфраструктура, созданная для комфорта и успеха каждого студента.</p>
-                <button class="btn" onclick="goToStudentApplication()">Подать заявку в общежитие</button>
-                <button class="aut" onclick="goToLogin()">Войти в систему</button>
+                    <button data-translate="student_application" class="btn" onclick="goToStudentApplication()">Подать заявку в общежитие</button>
+                    <button data-translate="login" class="aut" onclick="goToLogin()">Войти в систему</button>
             </div>
         </div>
     </header>
@@ -212,7 +246,6 @@
                         <li><a href="#about" data-translate="nav_about">О кампусе</a></li>
                         <li><a href="#services" data-translate="nav_services">Услуги</a></li>
                         <li><a href="#gallery" data-translate="nav_gallery">Галерея</a></li>
-                        <li><a href="#contact" data-translate="nav_contact">Регистрация</a></li>
                     </ul>
                 </div>
             </div>

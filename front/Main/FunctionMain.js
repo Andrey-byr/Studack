@@ -6,12 +6,21 @@ const translations = {
         // Language selector
         currentLanguage: "Русский",
         
+        information_about_studant:"Информация об очереди",
+        status_application: "Статус заявки",
+        verification_title: "Проверка данных",
+        verification_name: "Имя:",
+        verification_age: "Возраст:",
+        verification_cancel: "Отмена",
+        verification_confirm: "Подтвердить",
+        student_application:"Подать заявку в общежитие",
+        login:"Войти в систему",
+        
         // Navigation
         logo: "СТУДГОРОДОК",
         nav_about: "О кампусе",
         nav_services: "Услуги",
         nav_gallery: "Галерея",
-        nav_contact: "Регистрация",
         
         // Hero section
         hero_title: "СТУДЕНЧЕСКИЙ\nГОРОДОК",
@@ -75,11 +84,19 @@ const translations = {
     },
     en: {
         currentLanguage: "English",
+        information_about_studant:"Queue Information",
+        status_application: "Application Status",
+        verification_title: "Data Verification",
+        verification_name: "Name:",
+        verification_age: "Age:",
+        verification_cancel: "Cancel",
+        verification_confirm: "Confirm",
+        student_application:"Submit a Dormitory Application",
+        login:"Log in system",
         logo: "STUDENT CAMPUS",
         nav_about: "About Campus",
         nav_services: "Services",
         nav_gallery: "Gallery",
-        nav_contact: "Registration",
         hero_title: "STUDENT\nCAMPUS",
         hero_description: "Modern space for studying, living and development. Innovative infrastructure created for the comfort and success of every student.",
         hero_button: "Register Now",
@@ -131,11 +148,19 @@ const translations = {
     },
     es: {
         currentLanguage: "Español",
+        information_about_studant: "Información de la cola",
+        status_application: "Estado de la Solicitud",
+        verification_title: "Verificación de Datos",
+        verification_name: "Nombre:",
+        verification_age: "Edad:",
+        verification_cancel: "Cancelar",
+        verification_confirm: "Confirmar",
+        student_application: "Enviar una solicitud de residencia",
+        login: "Iniciar sesión",
         logo: "CAMPUS ESTUDIANTIL",
         nav_about: "Sobre el Campus",
         nav_services: "Servicios",
         nav_gallery: "Galería",
-        nav_contact: "Registro",
         hero_title: "CAMPUS\nESTUDIANTIL",
         hero_description: "Espacio moderno para estudiar, vivir y desarrollarse. Infraestructura innovadora creada para la comodidad y el éxito de cada estudiante.",
         hero_button: "Registrarse",
@@ -284,107 +309,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Student Form Functionality
-document.getElementById('studentForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Basic validation
-    const fullName = document.getElementById('fullName').value;
-    const birthDate = document.getElementById('birthDate').value;
-    const phone = document.getElementById('phone').value;
-    const gpa = document.getElementById('gpa').value;
-    const familyIncome = document.getElementById('familyIncome').value;
-    
-    if (!fullName || !birthDate || !phone || !gpa || !familyIncome) {
-        alert('Пожалуйста, заполните все обязательные поля');
-        return;
-    }
-    
-    // Collect form data
-    const formData = {
-        fullName: fullName,
-        birthDate: birthDate,
-        phone: phone,
-        gpa: parseFloat(gpa),
-        publicWork: document.getElementById('publicWork').checked,
-        familyIncome: parseFloat(familyIncome),
-    };
-    
-    fetch('http://127.0.0.1:2000/add/students',
-    {
-        method: 'POST',
-        headers: 
-        {'Content-Type': 'application/json'},
-        body: JSON.stringify(formData)
-
-    }).then(()=>{console.log('Успешно отправлены')})
-
-
-    console.log('Student Form Data:', formData);
-    
-    // Show success message
-    const successMessage = translations[currentLang].form_submit + ' успешно отправлена!';
-    alert(successMessage + ' Мы свяжемся с вами в ближайшее время.');
-    
-    // Reset form
-    this.reset();
-});
-
-// Phone number formatting for Belarus
-document.getElementById('phone').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    
-    if (value.startsWith('375')) {
-        value = value.substring(3);
-    }
-    
-    value = value.substring(0, 9);
-    let formattedValue = '+375 (';
-    
-    if (value.length > 0) {
-        formattedValue += value.substring(0, 2);
-    }
-    if (value.length > 2) {
-        formattedValue += ') ' + value.substring(2, 5);
-    }
-    if (value.length > 5) {
-        formattedValue += '-' + value.substring(5, 7);
-    }
-    if (value.length > 7) {
-        formattedValue += '-' + value.substring(7, 9);
-    }
-    
-    e.target.value = formattedValue;
-});
-
-// GPA validation
-document.getElementById('gpa').addEventListener('change', function(e) {
-    const value = parseFloat(e.target.value);
-    if (value < 2.0 || value > 10.0) {
-        alert('Средний балл должен быть от 2.0 до 10.0');
-        e.target.value = '';
-    }
-});
-
-// Create floating elements
-function createFloatingElements() {
-    const container = document.getElementById('floatingElements');
-    for (let i = 0; i < 8; i++) {
-        const element = document.createElement('div');
-        element.className = 'floating-element';
-        const size = Math.random() * 20 + 10;
-        element.style.width = `${size}px`;
-        element.style.height = `${size}px`;
-        element.style.top = `${Math.random() * 100}%`;
-        element.style.left = `${Math.random() * 100}%`;
-        element.style.animationDelay = `${Math.random() * 10}s`;
-        element.style.animationDuration = `${15 + Math.random() * 10}s`;
-        container.appendChild(element);
-    }
-}
-
-createFloatingElements();
-
 // Parallax effect
 window.addEventListener('scroll', function() {
     const scrolled = window.pageYOffset;
@@ -402,3 +326,190 @@ function goToStudentApplication(){
 function goToLogin(){
     window.location.href = `../Login/login.html`
 }
+
+function goToQueue() {
+    window.location.href = `../Queue/queue.html`;
+}
+
+function ModalOpen() {
+    const modal = document.getElementById("verificationModal");
+    modal.classList.add("active");
+    
+    document.body.style.overflow = "hidden";
+    
+    document.getElementById("inputName").value = "";
+    document.getElementById("inputAge").value = "";
+}
+
+function ModalClose() {
+    const modal = document.getElementById("verificationModal");
+    modal.classList.remove("active");
+    
+    document.body.style.overflow = "auto";
+}
+
+function showModalMessage(message, type = 'info') {
+    const existingMessages = document.querySelectorAll('.modal-message');
+    existingMessages.forEach(msg => {
+        if (msg.classList.contains(`modal-message-${type}`)) {
+            msg.remove();
+        }
+    });
+    
+    
+    const messageEl = document.createElement('div');
+    messageEl.className = `modal-message modal-message-${type}`;
+    
+
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+    };
+    
+    messageEl.innerHTML = `
+        <span class="modal-message-icon">${icons[type] || icons.info}</span>
+        <span class="modal-message-content">${message}</span>
+        <button class="modal-message-close">&times;</button>
+    `;
+    
+
+    document.body.appendChild(messageEl);
+    
+
+    const closeBtn = messageEl.querySelector('.modal-message-close');
+    closeBtn.addEventListener('click', () => {
+        removeModalMessage(messageEl);
+    });
+    
+
+    const durations = {
+        success: 5000,
+        error: 7000,
+        warning: 6000,
+        info: 4000
+    };
+    
+    const autoRemoveTimeout = setTimeout(() => {
+        removeModalMessage(messageEl);
+    }, durations[type] || 5000);
+    
+
+    function removeModalMessage(element) {
+        if (element && element.parentNode) {
+            clearTimeout(autoRemoveTimeout);
+            element.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (element && element.parentNode) {
+                    element.remove();
+                }
+            }, 300);
+        }
+    }
+    
+
+    messageEl.removeMessage = () => removeModalMessage(messageEl);
+    
+    return messageEl;
+}
+
+
+function showModalFieldError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    if (!field) return;
+    
+
+    field.classList.add('modal-field-error');
+    
+
+    showModalMessage(message, 'error');
+    
+
+    field.focus();
+    
+
+    const clearErrorHandler = () => {
+        field.classList.remove('modal-field-error');
+        field.removeEventListener('input', clearErrorHandler);
+        field.removeEventListener('focus', clearErrorHandler);
+    };
+    
+    field.addEventListener('input', clearErrorHandler);
+    field.addEventListener('focus', clearErrorHandler);
+}
+
+
+function clearModalFieldError(fieldId) {
+    const field = document.getElementById(fieldId);
+    if (field) {
+        field.classList.remove('modal-field-error');
+    }
+}
+
+
+function clearAllModalErrors() {
+    const errorFields = document.querySelectorAll('.modal-field-error');
+    errorFields.forEach(field => field.classList.remove('modal-field-error'));
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    document.getElementById('closeModal').addEventListener('click', ModalClose);
+    
+
+    document.getElementById('cancelVerification').addEventListener('click', ModalClose);
+    
+
+    document.getElementById('verificationModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            ModalClose();
+        }
+    });
+    
+
+    document.getElementById('confirmVerification').addEventListener('click', function() {
+        const name = document.getElementById("inputName").value.trim();
+        const age = document.getElementById("inputAge").value.trim();
+        
+
+        clearAllModalErrors();
+        
+        let hasErrors = false;
+        
+
+        if (!name) {
+            showModalFieldError('inputName', 'Пожалуйста, введите имя');
+            hasErrors = true;
+        } else if (name.length < 2) {
+            showModalFieldError('inputName', 'Имя должно содержать минимум 2 символа');
+            hasErrors = true;
+        }
+        
+
+        if (!age) {
+            showModalFieldError('inputAge', 'Пожалуйста, введите возраст');
+            hasErrors = true;
+        } else {
+            const ageNum = parseInt(age);
+            if (isNaN(ageNum) || ageNum < 1 || ageNum > 100) {
+                showModalFieldError('inputAge', 'Возраст должен быть числом от 1 до 100');
+                hasErrors = true;
+            }
+        }
+        
+        if (hasErrors) {
+            return; // Не переходим дальше при ошибках
+        }
+        
+        // Если ошибок нет, показываем успешное сообщение
+        showModalMessage('Данные подтверждены! Переходим дальше...', 'success');
+        
+        // Закрываем модальное окно и переходим
+        setTimeout(() => {
+            ModalClose();
+            window.location.href = "../Queue/queue.html";
+        }, 1500);
+    });
+});
