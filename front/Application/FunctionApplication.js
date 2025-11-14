@@ -401,6 +401,7 @@ async function submitApplication(e) {
 
     try {
         // Сначала добавляем студента и получаем его ID
+
         const responseStudent = await fetch('http://127.0.0.1:2000/add/students', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -412,8 +413,7 @@ async function submitApplication(e) {
         if (studentResult.success) {
             const formApplication = {
                 date: new Date().toISOString().split('T')[0], 
-                type: dormitoryType === 'family' ? "Семейное" : "Обычное",
-                studentId: studentResult.studentId
+                type: dormitoryType === 'family' ? "Семейное" : "Не семейное",
             };
 
             const responseApplication = await fetch('http://127.0.0.1:2000/add/application', {
@@ -425,10 +425,9 @@ async function submitApplication(e) {
             const applicationResult = await responseApplication.json();
 
             if (applicationResult.success) {
-                // Показываем сообщение об успехе
-                 
-                // Ждем немного перед переходом
+                showMessage(applicationTranslations[currentLang].success_submit, 'success')
                 setTimeout(() => {
+                    localStorage.setItem("id", studentResult.studentId)
                     goToStudentInfo();
                 }, 1500);
             } else {
@@ -446,7 +445,7 @@ async function submitApplication(e) {
 
 function goToMainPage() {
     try {
-        window.location.href = '../Main/сайт главная.html';
+        window.location.href = '../Main/Main.html';
     } catch (error) {
         const link = document.createElement('a');
         link.href = '../Main/сайт главная.html';

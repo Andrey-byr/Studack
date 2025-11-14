@@ -272,7 +272,7 @@ function showMessage(message, type) {
 
 function goToMainPage() {
     try {
-        window.location.href = '../Main/сайт главная.html';
+        window.location.href = '../Main/Main.html';
     } catch (error) {
         console.log('Redirecting to main page...');
         alert(currentLang === 'ru' ? 'Перенаправление на главную страницу' :
