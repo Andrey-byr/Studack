@@ -523,3 +523,17 @@ body {
         grid-template-columns: 1fr;
     }
 }
+.no-data {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.mt-3 {
+    margin-top: 0.75rem;
+}

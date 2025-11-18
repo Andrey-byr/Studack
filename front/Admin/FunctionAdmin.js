@@ -6,22 +6,14 @@ document.addEventListener('DOMContentLoaded', function() {
     initApp();
 });
 
+// Константы API
+const API_BASE = 'http://localhost:2000';
+
 // Данные приложения
 let appState = {
-    dorms: [
-        { id: 1, address: "ул. Ломоносова, 12", type: "семейное", total: 120, free: 14, feature: "Отдельные кухни" },
-        { id: 2, address: "ул. Советская, 8", type: "несемейное", total: 300, free: 42, feature: "Спортивный зал" },
-        { id: 3, address: "ул. Гагарина, 25", type: "несемейное", total: 250, free: 3, feature: "Большая библиотека" }
-    ],
-    queue: [
-        { id: 1, name: "Иванов И.И.", priority: 134, desiredType: "несемейное", score: 91, income: 12000, activity: true, applicationDate: "2025-11-01", birth: "2004-06-01", phone: "+7 900 111-22-33" },
-        { id: 2, name: "Петрова А.Н.", priority: 98, desiredType: "семейное", score: 89, income: 15500, activity: false, applicationDate: "2025-10-20", birth: "2003-01-12", phone: "+7 900 444-55-66" },
-        { id: 3, name: "Смирнов Д.А.", priority: 110, desiredType: "несемейное", score: 85, income: 10000, activity: true, applicationDate: "2025-11-10", birth: "2005-09-10", phone: "+7 900 777-88-99" }
-    ],
-    settled: [
-        { id: 1, name: "Кузнецов А.А.", dorm: "ул. Ломоносова, 12", settleDate: "2025-09-01", evictionDate: null },
-        { id: 2, name: "Горбунова Е.В.", dorm: "ул. Советская, 8", settleDate: "2025-08-15", evictionDate: null }
-    ],
+    dorms: [],
+    queue: [],
+    settled: [],
     filters: {
         dormType: "all",
         onlyFree: false,
@@ -38,10 +30,96 @@ let appState = {
     confirmAction: null
 };
 
+// API функции
+async function apiGet(endpoint) {
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.json();
+    } catch (error) {
+        console.error(`API GET error (${endpoint}):`, error);
+        throw error;
+    }
+}
+
+async function apiPost(endpoint, data) {
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.json();
+    } catch (error) {
+        console.error(`API POST error (${endpoint}):`, error);
+        throw error;
+    }
+}
+
+// Загрузка данных с сервера
+async function loadDorms() {
+    try {
+        appState.dorms = await apiGet('/dormitories');
+    } catch (error) {
+        console.error('Ошибка загрузки общежитий:', error);
+        alert('Ошибка загрузки общежитий');
+    }
+}
+
+async function loadQueue() {
+    try {
+        const queueData = await apiGet('/queue');
+        // Преобразуем данные для фронтенда
+        appState.queue = queueData.map(q => ({
+            id: q.id,
+            studentId: q.studentId,
+            name: q.name,
+            priority: q.priority,
+            desiredType: q.desiredType,
+            score: q.score,
+            income: q.income,
+            activity: q.activity,
+            applicationDate: q.applicationDate,
+            birth: q.birth,
+            phone: q.phone
+        }));
+    } catch (error) {
+        console.error('Ошибка загрузки очереди:', error);
+        alert('Ошибка загрузки очереди');
+    }
+}
+
+async function loadSettled() {
+    try {
+        const settledData = await apiGet('/residents');
+        // Преобразуем данные для фронтенда
+        appState.settled = settledData.map(r => ({
+            id: r.id,
+            studentId: r.studentId,
+            name: r.name,
+            dorm: r.dorm,
+            settleDate: r.settleDate,
+            evictionDate: r.evictionDate
+        }));
+    } catch (error) {
+        console.error('Ошибка загрузки проживающих:', error);
+        alert('Ошибка загрузки проживающих');
+    }
+}
+
 // Инициализация приложения
-function initApp() {
+async function initApp() {
     // Настройка обработчиков событий
     setupEventListeners();
+    
+    // Загружаем данные с сервера
+    try {
+        await Promise.all([loadDorms(), loadQueue(), loadSettled()]);
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+        alert('Ошибка загрузки данных с сервера');
+    }
     
     // Первоначальный рендеринг
     renderDashboard();
@@ -174,6 +252,11 @@ function renderQueue() {
     
     queueList.innerHTML = '';
     
+    if (filteredQueue.length === 0) {
+        queueList.innerHTML = '<div class="no-data">Нет заявок, соответствующих фильтрам</div>';
+        return;
+    }
+    
     filteredQueue.forEach(student => {
         const badge = getPriorityBadge(student.priority);
         
@@ -191,10 +274,10 @@ function renderQueue() {
                 <div class="student-details">Баллы: ${student.score} · Доход: ${student.income} · Общественная работа: ${student.activity ? 'Да' : 'Нет'}</div>
             </div>
             <div class="queue-actions">
-                <button class="action-btn settle-btn" data-id="${student.id}">
+                <button class="action-btn settle-btn" data-student-id="${student.studentId}">
                     <i data-lucide="plus"></i> Заселить
                 </button>
-                <button class="action-btn reject-btn" data-id="${student.id}">
+                <button class="action-btn reject-btn" data-application-id="${student.id}">
                     Отклонить
                 </button>
             </div>
@@ -204,11 +287,13 @@ function renderQueue() {
         
         // Добавление обработчиков событий для кнопок
         queueItem.querySelector('.settle-btn').addEventListener('click', function() {
-            openSettleConfirm(student.id);
+            const studentId = parseInt(this.getAttribute('data-student-id'));
+            openSettleConfirm(studentId);
         });
         
         queueItem.querySelector('.reject-btn').addEventListener('click', function() {
-            openRejectConfirm(student.id);
+            const applicationId = parseInt(this.getAttribute('data-application-id'));
+            openRejectConfirm(applicationId);
         });
     });
     
@@ -241,6 +326,11 @@ function renderSettled() {
     
     settledList.innerHTML = '';
     
+    if (filteredSettled.length === 0) {
+        settledList.innerHTML = '<div class="no-data">Нет проживающих, соответствующих фильтрам</div>';
+        return;
+    }
+    
     filteredSettled.forEach(resident => {
         const settledItem = document.createElement('div');
         settledItem.className = 'settled-item';
@@ -250,7 +340,7 @@ function renderSettled() {
                 <div class="student-details">Общежитие: ${resident.dorm} · Заселен: ${resident.settleDate}</div>
             </div>
             <div class="settled-actions">
-                <button class="action-btn evict-btn" data-id="${resident.id}">
+                <button class="action-btn evict-btn" data-resident-id="${resident.id}">
                     <i data-lucide="door-closed"></i> Выселить
                 </button>
             </div>
@@ -260,7 +350,8 @@ function renderSettled() {
         
         // Добавление обработчиков событий для кнопок
         settledItem.querySelector('.evict-btn').addEventListener('click', function() {
-            openEvictConfirm(resident.id);
+            const residentId = parseInt(this.getAttribute('data-resident-id'));
+            openEvictConfirm(residentId);
         });
     });
     
@@ -281,6 +372,11 @@ function renderDorms() {
     const filteredDorms = getFilteredDorms();
     
     dormsGrid.innerHTML = '';
+    
+    if (filteredDorms.length === 0) {
+        dormsGrid.innerHTML = '<div class="no-data">Нет общежитий, соответствующих фильтрам</div>';
+        return;
+    }
     
     filteredDorms.forEach(dorm => {
         const percentFree = Math.round((dorm.free / dorm.total) * 100);
@@ -372,40 +468,40 @@ function autoSelectDorm(desiredType) {
     return candidates[0];
 }
 
-// Открытие подтверждения заселения
-function openSettleConfirm(studentId) {
-    const student = appState.queue.find(s => s.id === studentId);
-    if (!student) return;
-    
-    const recommended = autoSelectDorm(student.desiredType);
-    appState.confirmAction = {
-        type: "settle",
-        studentId: student.id,
-        recommendedDormId: recommended ? recommended.id : null,
-        selectedDormId: recommended ? recommended.id : null
-    };
-    
+// Установка действия подтверждения
+function setConfirmAction(action) {
+    appState.confirmAction = action;
     showConfirmModal();
 }
 
-// Открытие подтверждения отклонения
-function openRejectConfirm(studentId) {
-    appState.confirmAction = {
-        type: "reject",
-        studentId: studentId
-    };
+// Открытие подтверждения заселения
+function openSettleConfirm(studentId) {
+    const student = appState.queue.find(s => s.studentId === studentId);
+    if (!student) return;
     
-    showConfirmModal();
+    const recommended = autoSelectDorm(student.desiredType);
+    setConfirmAction({
+        type: "settle",
+        studentId: studentId,
+        recommendedDormId: recommended ? recommended.id : null,
+        selectedDormId: recommended ? recommended.id : null
+    });
+}
+
+// Открытие подтверждения отклонения
+function openRejectConfirm(applicationId) {
+    setConfirmAction({
+        type: "reject",
+        applicationId: applicationId
+    });
 }
 
 // Открытие подтверждения выселения
 function openEvictConfirm(residentId) {
-    appState.confirmAction = {
+    setConfirmAction({
         type: "evict",
         residentId: residentId
-    };
-    
-    showConfirmModal();
+    });
 }
 
 // Показать модальное окно подтверждения
@@ -413,7 +509,7 @@ function showConfirmModal() {
     const confirmContent = document.getElementById('confirm-content');
     
     if (appState.confirmAction.type === 'settle') {
-        const student = appState.queue.find(s => s.id === appState.confirmAction.studentId);
+        const student = appState.queue.find(s => s.studentId === appState.confirmAction.studentId);
         const recommendedDorm = appState.dorms.find(d => d.id === appState.confirmAction.recommendedDormId);
         
         confirmContent.innerHTML = `
@@ -471,52 +567,42 @@ function cancelConfirm() {
 }
 
 // Применение подтверждения
-function applyConfirm() {
+async function applyConfirm() {
     if (!appState.confirmAction) return;
-    
-    if (appState.confirmAction.type === 'settle') {
-        const student = appState.queue.find(s => s.id === appState.confirmAction.studentId);
-        const dorm = appState.dorms.find(d => d.id === Number(appState.confirmAction.selectedDormId));
-        
-        if (!student || !dorm) {
-            cancelConfirm();
-            return;
+
+    try {
+        if (appState.confirmAction.type === 'settle') {
+            await apiPost('/settle', {
+                studentId: appState.confirmAction.studentId,
+                dormitoryId: Number(appState.confirmAction.selectedDormId)
+            });
+        } 
+        else if (appState.confirmAction.type === 'reject') {
+            await apiPost('/reject', {
+                applicationId: appState.confirmAction.applicationId
+            });
+        } 
+        else if (appState.confirmAction.type === 'evict') {
+            await apiPost('/evict', {
+                habitationId: appState.confirmAction.residentId
+            });
         }
+
+        // Перезагружаем данные с сервера
+        await Promise.all([loadDorms(), loadQueue(), loadSettled()]);
         
-        // Обновление состояния
-        appState.dorms = appState.dorms.map(d => 
-            d.id === dorm.id ? { ...d, free: Math.max(0, d.free - 1) } : d
-        );
+        // Обновляем интерфейс
+        renderDashboard();
+        renderQueue();
+        renderSettled();
+        renderDorms();
         
-        appState.queue = appState.queue.filter(s => s.id !== student.id);
+        cancelConfirm();
         
-        appState.settled = [
-            ...appState.settled,
-            { 
-                id: Date.now(), 
-                name: student.name, 
-                dorm: dorm.address, 
-                settleDate: new Date().toISOString().slice(0, 10), 
-                evictionDate: null 
-            }
-        ];
+    } catch (error) {
+        console.error('Ошибка выполнения действия:', error);
+        alert('Ошибка при выполнении действия: ' + error.message);
     }
-    
-    if (appState.confirmAction.type === 'reject') {
-        appState.queue = appState.queue.filter(s => s.id !== appState.confirmAction.studentId);
-    }
-    
-    if (appState.confirmAction.type === 'evict') {
-        appState.settled = appState.settled.filter(r => r.id !== appState.confirmAction.residentId);
-    }
-    
-    // Обновление интерфейса
-    renderDashboard();
-    renderQueue();
-    renderSettled();
-    renderDorms();
-    
-    cancelConfirm();
 }
 
 // Печать отчета
@@ -551,3 +637,15 @@ function printReport(which) {
     printWindow.document.close();
     printWindow.print();
 }
+
+// Добавляем стиль для сообщения об отсутствии данных
+const style = document.createElement('style');
+style.textContent = `
+    .no-data {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+        font-style: italic;
+    }
+`;
+document.head.appendChild(style);
