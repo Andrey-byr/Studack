@@ -3,49 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель администратора - Общежития</title>
+    <title data-translate="admin_title">Панель администратора - Общежития</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="StyleAdmin.css">
 </head>
 <body>
+    <!-- Top Controls -->
+    <div class="top-controls">
+        <div class="nav-buttons">
+            <button class="nav-btn back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+                <span data-translate="btn_back">Назад</span>
+            </button>
+        </div>
+        
+        <div class="right-controls">
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <button class="language-btn" id="languageBtn">
+                    <i class="fas fa-globe"></i>
+                    <span id="currentLanguage">Русский</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="language-dropdown" id="languageDropdown">
+                    <div class="language-option" data-lang="ru">
+                        <img src="https://flagcdn.com/w40/by.png" class="language-flag" alt="Russian">
+                        Русский
+                    </div>
+                    <div class="language-option" data-lang="en">
+                        <img src="https://flagcdn.com/w40/gb.png" class="language-flag" alt="English">
+                        English
+                    </div>
+                    <div class="language-option" data-lang="es">
+                        <img src="https://flagcdn.com/w40/es.png" class="language-flag" alt="Spanish">
+                        Español
+                    </div>
+                </div>
+            </div>
+
+            <!-- Theme Toggle Button -->
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </div>
+
     <div class="admin-container">
         <header class="admin-header">
-            <h1>Панель управления общежитиями</h1>
+            <h1 data-translate="admin_title">Панель управления общежитиями</h1>
             <div class="admin-nav">
                 <button class="nav-btn active" onclick="showSection('queue')">
-                    <i class="fas fa-list-ol"></i> Очередь
+                    <i class="fas fa-list-ol"></i> <span data-translate="nav_queue">Очередь</span>
                 </button>
                 <button class="nav-btn" onclick="showSection('dormitories')">
-                    <i class="fas fa-building"></i> Общежития
+                    <i class="fas fa-building"></i> <span data-translate="nav_dormitories">Общежития</span>
                 </button>
                 <button class="nav-btn" onclick="showSection('residents')">
-                    <i class="fas fa-users"></i> Заселенные
+                    <i class="fas fa-users"></i> <span data-translate="nav_residents">Заселенные</span>
                 </button>
                 <button class="nav-btn" onclick="showSection('reports')">
-                    <i class="fas fa-chart-bar"></i> Отчеты
-                </button>
-                <button class="nav-btn" onclick="goBack()" style="background: #95a5a6;">
-                    <i class="fas fa-arrow-left"></i> Назад
+                    <i class="fas fa-chart-bar"></i> <span data-translate="nav_reports">Отчеты</span>
                 </button>
             </div>
         </header>
 
         <!-- Секция очереди -->
         <section id="queue-section" class="section active">
-            <h2>Очередь на заселение</h2>
+            <h2 data-translate="queue_title">Очередь на заселение</h2>
             <div class="filters">
                 <select id="dormFilter" onchange="loadQueue()">
-                    <option value="">Все типы</option>
-                    <option value="family">Семейные</option>
-                    <option value="single">Несемейные</option>
+                    <option value="" data-translate="filter_all_types">Все типы</option>
+                    <option value="family" data-translate="filter_family">Семейные</option>
+                    <option value="single" data-translate="filter_single">Несемейные</option>
                 </select>
                 <select id="statusFilter" onchange="loadQueue()">
-                    <option value="pending">В ожидании</option>
-                    <option value="approved">Одобренные</option>
-                    <option value="all">Все</option>
+                    <option value="pending" data-translate="status_pending">В ожидании</option>
+                    <option value="approved" data-translate="status_approved">Одобренные</option>
+                    <option value="all" data-translate="status_all">Все</option>
                 </select>
                 <button onclick="loadQueue()" class="nav-btn">
-                    <i class="fas fa-sync-alt"></i> Обновить
+                    <i class="fas fa-sync-alt"></i> <span data-translate="btn_refresh">Обновить</span>
                 </button>
             </div>
             <div id="queueList" class="queue-list">
@@ -55,10 +92,10 @@
 
         <!-- Секция управления общежитиями -->
         <section id="dormitories-section" class="section">
-            <h2>Управление общежитиями</h2>
+            <h2 data-translate="dormitories_title">Управление общежитиями</h2>
             <div class="filters">
                 <button onclick="loadDormitories()" class="nav-btn">
-                    <i class="fas fa-sync-alt"></i> Обновить список
+                    <i class="fas fa-sync-alt"></i> <span data-translate="btn_refresh_list">Обновить список</span>
                 </button>
             </div>
             <div id="dormitoriesList" class="dormitories-grid">
@@ -68,13 +105,13 @@
 
         <!-- Секция заселенных студентов -->
         <section id="residents-section" class="section">
-            <h2>Заселенные студенты</h2>
+            <h2 data-translate="residents_title">Заселенные студенты</h2>
             <div class="filters">
                 <select id="residentDormFilter" onchange="loadResidents()">
-                    <option value="">Все общежития</option>
+                    <option value="" data-translate="filter_all_dorms">Все общежития</option>
                 </select>
                 <button onclick="loadResidents()" class="nav-btn">
-                    <i class="fas fa-sync-alt"></i> Обновить
+                    <i class="fas fa-sync-alt"></i> <span data-translate="btn_refresh">Обновить</span>
                 </button>
             </div>
             <div id="residentsList" class="queue-list">
@@ -84,19 +121,19 @@
 
         <!-- Секция отчетов -->
         <section id="reports-section" class="section">
-            <h2>Отчеты и статистика</h2>
+            <h2 data-translate="reports_title">Отчеты и статистика</h2>
             <div class="reports-grid">
                 <div class="report-card" onclick="generateVacancyReport()">
-                    <h3><i class="fas fa-bed"></i> Свободные места</h3>
-                    <div id="vacancyStats">Нажмите для генерации отчета</div>
+                    <h3><i class="fas fa-bed"></i> <span data-translate="report_vacancy">Свободные места</span></h3>
+                    <div id="vacancyStats" data-translate="report_click_generate">Нажмите для генерации отчета</div>
                 </div>
                 <div class="report-card" onclick="generateQueueReport()">
-                    <h3><i class="fas fa-list-ol"></i> Статистика очереди</h3>
-                    <div id="queueStats">Нажмите для генерации отчета</div>
+                    <h3><i class="fas fa-list-ol"></i> <span data-translate="report_queue">Статистика очереди</span></h3>
+                    <div id="queueStats" data-translate="report_click_generate">Нажмите для генерации отчета</div>
                 </div>
                 <div class="report-card" onclick="generateSettlementReport()">
-                    <h3><i class="fas fa-chart-line"></i> Статистика заселения</h3>
-                    <div id="settlementStats">Нажмите для генерации отчета</div>
+                    <h3><i class="fas fa-chart-line"></i> <span data-translate="report_settlement">Статистика заселения</span></h3>
+                    <div id="settlementStats" data-translate="report_click_generate">Нажмите для генерации отчета</div>
                 </div>
             </div>
         </section>
