@@ -124,6 +124,12 @@ function setupEventListeners() {
     }
     
     document.addEventListener('click', closeLanguageDropdown);
+    
+    // Добавляем обработчик для кнопки обновления
+    const refreshBtn = document.querySelector('.status-actions .btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', refreshStatus);
+    }
 }
 
 function toggleLanguageDropdown(e) {
@@ -188,14 +194,17 @@ async function loadCurrentUser() {
             return;
         }
 
-        // Получаем данные очереди и находим текущего пользователя
-        const response = await fetch('http://127.0.0.1:2000/get/queue');
+        // Исправленный эндпоинт - убрали /get
+        const response = await fetch('http://127.0.0.1:2000/queue');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const data = await response.json();
-        const userData = data.find(item => item.student_id == studentId);
+        console.log('Queue data received:', data);
+        
+        // Ищем пользователя по studentId
+        const userData = data.find(item => item.studentId == studentId);
         
         if (userData) {
             currentUser = userData;
@@ -212,7 +221,8 @@ async function loadCurrentUser() {
 
 async function loadQueueData() {
     try {
-        const response = await fetch('http://127.0.0.1:2000/get/queue');
+        // Исправленный эндпоинт - убрали /get
+        const response = await fetch('http://127.0.0.1:2000/queue');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -221,7 +231,7 @@ async function loadQueueData() {
         console.log('Queue data loaded:', queueData);
 
         // Сортируем по приоритету (по убыванию)
-        queueData.sort((a, b) => b.calculated_priority - a.calculated_priority);
+        queueData.sort((a, b) => b.priority - a.priority);
 
     } catch (error) {
         console.error('Error loading queue data:', error);
@@ -284,9 +294,9 @@ function displayStatus() {
         return;
     }
 
-    const userPosition = queueData.findIndex(item => item.student_id === currentUser.student_id) + 1;
+    const userPosition = queueData.findIndex(item => item.studentId === currentUser.studentId) + 1;
     const totalInQueue = queueData.length;
-    const priorityLevel = getPriorityLevel(currentUser.calculated_priority);
+    const priorityLevel = getPriorityLevel(currentUser.priority);
     const estimatedWait = Math.floor(userPosition * 2.5);
     const progressPercentage = totalInQueue > 0 ? ((totalInQueue - userPosition + 1) / totalInQueue) * 100 : 0;
 
@@ -294,23 +304,23 @@ function displayStatus() {
         <div class="status-info">
             <div class="status-item">
                 <strong>${translations[currentLang].fullName}:</strong>
-                <span>${currentUser.full_name || 'Не указано'}</span>
+                <span>${currentUser.name || 'Не указано'}</span>
             </div>
             <div class="status-item">
                 <strong>${translations[currentLang].income}:</strong>
-                <span>${(currentUser.family_income_per_member || 0).toLocaleString()} ₽</span>
+                <span>${(currentUser.income || 0).toLocaleString()} ₽</span>
             </div>
             <div class="status-item">
                 <strong>${translations[currentLang].grade}:</strong>
-                <span>${currentUser.average_grade || 'Не указано'}</span>
+                <span>${currentUser.score || 'Не указано'}</span>
             </div>
             <div class="status-item">
                 <strong>${translations[currentLang].publicWork}:</strong>
-                <span>${currentUser.has_public_work ? translations[currentLang].yes : translations[currentLang].no}</span>
+                <span>${currentUser.activity ? translations[currentLang].yes : translations[currentLang].no}</span>
             </div>
             <div class="status-item">
                 <strong>${translations[currentLang].dormType}:</strong>
-                <span>${currentUser.desired_dormitory_type || 'Не указано'}</span>
+                <span>${currentUser.desiredType || 'Не указано'}</span>
             </div>
             <div class="status-item">
                 <strong>${translations[currentLang].yourPosition}:</strong>
@@ -354,28 +364,28 @@ function displayQueue() {
     
     queueData.forEach((item, index) => {
         const position = index + 1;
-        const isCurrentUser = currentUser && item.student_id === currentUser.student_id;
-        const priorityLevel = getPriorityLevel(item.calculated_priority);
-        const publicWorkText = item.has_public_work ? translations[currentLang].yes : translations[currentLang].no;
+        const isCurrentUser = currentUser && item.studentId === currentUser.studentId;
+        const priorityLevel = getPriorityLevel(item.priority);
+        const activityText = item.activity ? translations[currentLang].yes : translations[currentLang].no;
 
         queueHTML += `
             <div class="queue-item ${isCurrentUser ? 'current-user' : ''}">
                 <div class="queue-rank">${position}</div>
                 <div class="queue-info">
                     <div class="queue-header">
-                        <strong>${item.full_name || 'Не указано'}</strong>
+                        <strong>${item.name || 'Не указано'}</strong>
                         <span class="priority-badge ${priorityLevel}">
                             ${translations[currentLang][priorityLevel]}
                         </span>
                     </div>
                     <div class="queue-details">
                         <div class="detail-row">
-                            <span>${translations[currentLang].income}: ${(item.family_income_per_member || 0).toLocaleString()} ₽</span>
-                            <span>${translations[currentLang].grade}: ${item.average_grade || 'Не указано'}</span>
+                            <span>${translations[currentLang].income}: ${(item.income || 0).toLocaleString()} ₽</span>
+                            <span>${translations[currentLang].grade}: ${item.score || 'Не указано'}</span>
                         </div>
                         <div class="detail-row">
-                            <span>${translations[currentLang].publicWork}: ${publicWorkText}</span>
-                            <span>${translations[currentLang].dormType}: ${item.desired_dormitory_type || 'Не указано'}</span>
+                            <span>${translations[currentLang].publicWork}: ${activityText}</span>
+                            <span>${translations[currentLang].dormType}: ${item.desiredType || 'Не указано'}</span>
                         </div>
                         ${isCurrentUser ? `<div class="user-indicator">${translations[currentLang].yourApplication}</div>` : ''}
                     </div>
@@ -389,8 +399,8 @@ function displayQueue() {
 
 function getPriorityLevel(priority) {
     if (!priority) return 'low';
-    if (priority > 0.7) return 'high';
-    if (priority > 0.4) return 'medium';
+    if (priority > 700) return 'high'; // Учитываем умножение на 1000 на сервере
+    if (priority > 400) return 'medium';
     return 'low';
 }
 

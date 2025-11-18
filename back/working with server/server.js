@@ -14,6 +14,79 @@ const pool = mysql2.createPool({
     password: 'Andrei123!'
 });
 
+function normalizeDormType(type) {
+    const typeMap = {
+        'Семейное': 'Семейное',
+        'семейное': 'Семейное',
+        'family': 'Семейное',
+        'Не семейное': 'Не семейное',
+        'несемейное': 'Не семейное',
+        'regular': 'Не семейное'
+    };
+    return typeMap[type] || 'Не семейное';
+}
+
+
+// добавление студента 
+app.post('/add/students', async (req, res) => {
+    const { fullName, birthDate, phone, gpa, publicWork, familyIncome } = req.body;
+
+    if (!fullName || !birthDate || !phone || gpa === undefined || familyIncome === undefined) {
+        return res.status(400).json({ success: false, message: "Не все данные заполнены" });
+    }
+
+    try {
+        const [result] = await pool.query(`
+            INSERT INTO students (full_name, date_of_birth, phone_number, average_grade, has_public_work, family_income_per_member)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `, [fullName, birthDate, phone, gpa, publicWork ? 1 : 0, familyIncome]);
+        res.json({ success: true, message: "Студент добавлен", studentId: result.insertId }); } catch (error) {
+        console.error("❌ Ошибка при добавлении студента:", error);
+        res.status(500).json({ success: false, message: "ошибка добавления" });
+    }
+});
+
+// добавление студента
+app.post('/add/application', async (req, res) => {
+    const { studentId, date, type } = req.body;
+    if (!date || !type) return res.status(400).json({ success: false, message: "Не все данные заполнены" });
+
+    const conn = await pool.getConnection();
+    try {
+        await conn.beginTransaction();
+
+        let targetStudentId = studentId;
+        if (!targetStudentId) {
+            const [last] = await conn.query(`SELECT student_id FROM students ORDER BY student_id DESC LIMIT 1`);
+            if (last.length === 0) {
+                await conn.rollback();
+                return res.status(400).json({ success: false, message: "Нет студентов для заявки" });
+            }
+            targetStudentId = last[0].student_id;
+        } else {
+            const [exists] = await conn.query(`SELECT student_id FROM students WHERE student_id = ? LIMIT 1`, [targetStudentId]);
+            if (exists.length === 0) {
+                await conn.rollback();
+                return res.status(404).json({ success: false, message: "Студент не найден" });
+            }
+        }
+
+        const normType = normalizeDormType(type);
+        const [ins] = await conn.query(`
+            INSERT INTO applications (application_date, desired_dormitory_type, student_id)
+            VALUES (?, ?, ?)
+        `, [date, normType, targetStudentId]);
+
+        await conn.commit();
+        res.json({ success: true, message: "Заявка добавлена", applicationId: ins.insertId, studentId: targetStudentId });
+    } catch (error) {
+        await conn.rollback();
+        console.error("❌ Ошибка при добавлении заявки:", error);
+        res.status(500).json({ success: false, message: "Ошибка при добавлении заявки" });
+    } finally {
+        conn.release();
+    }
+});
 // Получение списка общежитий
 app.get('/dormitories', async (req, res) => {
     try {

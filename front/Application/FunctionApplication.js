@@ -412,6 +412,7 @@ async function submitApplication(e) {
 
         if (studentResult.success) {
             const formApplication = {
+                studentId: studentResult.studentId,
                 date: new Date().toISOString().split('T')[0], 
                 type: dormitoryType === 'family' ? "Семейное" : "Не семейное",
             };

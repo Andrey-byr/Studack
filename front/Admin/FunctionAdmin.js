@@ -1,8 +1,6 @@
-// Инициализация иконок Lucide
+// FunctionAdmin.js - Complete Fixed Version with Type Matching
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
-    
-    // Инициализация приложения
     initApp();
 });
 
@@ -29,6 +27,27 @@ let appState = {
     },
     confirmAction: null
 };
+
+// Функция для нормализации типа общежития
+function normalizeDormType(type) {
+    if (!type) return type;
+    const typeMap = {
+        'Семейное': 'семейное',
+        'семейное': 'семейное',
+        'family': 'семейное',
+        'Не семейное': 'несемейное',
+        'несемейное': 'несемейное',
+        'regular': 'несемейное'
+    };
+    return typeMap[type] || type;
+}
+
+// Функция для проверки соответствия типов
+function isDormTypeMatching(studentType, dormType) {
+    const normalizedStudentType = normalizeDormType(studentType);
+    const normalizedDormType = normalizeDormType(dormType);
+    return normalizedStudentType === normalizedDormType;
+}
 
 // API функции
 async function apiGet(endpoint) {
@@ -60,7 +79,13 @@ async function apiPost(endpoint, data) {
 // Загрузка данных с сервера
 async function loadDorms() {
     try {
-        appState.dorms = await apiGet('/dormitories');
+        const dormData = await apiGet('/dormitories');
+        // Нормализуем типы общежитий при загрузке
+        appState.dorms = dormData.map(d => ({
+            ...d,
+            type: normalizeDormType(d.type)
+        }));
+        console.log('Dorms loaded:', appState.dorms);
     } catch (error) {
         console.error('Ошибка загрузки общежитий:', error);
         alert('Ошибка загрузки общежитий');
@@ -84,6 +109,7 @@ async function loadQueue() {
             birth: q.birth,
             phone: q.phone
         }));
+        console.log('Queue loaded:', appState.queue);
     } catch (error) {
         console.error('Ошибка загрузки очереди:', error);
         alert('Ошибка загрузки очереди');
@@ -102,6 +128,7 @@ async function loadSettled() {
             settleDate: r.settleDate,
             evictionDate: r.evictionDate
         }));
+        console.log('Settled loaded:', appState.settled);
     } catch (error) {
         console.error('Ошибка загрузки проживающих:', error);
         alert('Ошибка загрузки проживающих');
@@ -139,53 +166,83 @@ function setupEventListeners() {
     });
     
     // Поиск в очереди
-    document.getElementById('queue-search').addEventListener('input', function(e) {
-        appState.search.queue = e.target.value;
-        renderQueue();
-    });
+    const queueSearch = document.getElementById('queue-search');
+    if (queueSearch) {
+        queueSearch.addEventListener('input', function(e) {
+            appState.search.queue = e.target.value;
+            renderQueue();
+        });
+    }
     
     // Поиск в проживающих
-    document.getElementById('settled-search').addEventListener('input', function(e) {
-        appState.search.settled = e.target.value;
-        renderSettled();
-    });
+    const settledSearch = document.getElementById('settled-search');
+    if (settledSearch) {
+        settledSearch.addEventListener('input', function(e) {
+            appState.search.settled = e.target.value;
+            renderSettled();
+        });
+    }
     
     // Фильтры общежитий
-    document.getElementById('dorm-type-filter').addEventListener('change', function(e) {
-        appState.filters.dormType = e.target.value;
-        renderDorms();
-    });
+    const dormTypeFilter = document.getElementById('dorm-type-filter');
+    if (dormTypeFilter) {
+        dormTypeFilter.addEventListener('change', function(e) {
+            appState.filters.dormType = e.target.value;
+            renderDorms();
+        });
+    }
     
-    document.getElementById('only-free-toggle').addEventListener('change', function(e) {
-        appState.filters.onlyFree = e.target.checked;
-        renderDorms();
-    });
+    const onlyFreeToggle = document.getElementById('only-free-toggle');
+    if (onlyFreeToggle) {
+        onlyFreeToggle.addEventListener('change', function(e) {
+            appState.filters.onlyFree = e.target.checked;
+            renderDorms();
+        });
+    }
     
     // Модальное окно фильтров очереди
-    document.getElementById('queue-filter-btn').addEventListener('click', function() {
-        openQueueFilterModal();
-    });
+    const queueFilterBtn = document.getElementById('queue-filter-btn');
+    if (queueFilterBtn) {
+        queueFilterBtn.addEventListener('click', function() {
+            openQueueFilterModal();
+        });
+    }
     
-    document.getElementById('close-filter-modal').addEventListener('click', function() {
-        closeQueueFilterModal();
-    });
+    const closeFilterModal = document.getElementById('close-filter-modal');
+    if (closeFilterModal) {
+        closeFilterModal.addEventListener('click', function() {
+            closeQueueFilterModal();
+        });
+    }
     
-    document.getElementById('apply-filters').addEventListener('click', function() {
-        applyQueueFilters();
-    });
+    const applyFilters = document.getElementById('apply-filters');
+    if (applyFilters) {
+        applyFilters.addEventListener('click', function() {
+            applyQueueFilters();
+        });
+    }
     
     // Печать отчетов
-    document.getElementById('print-queue').addEventListener('click', function() {
-        printReport('queue');
-    });
+    const printQueue = document.getElementById('print-queue');
+    if (printQueue) {
+        printQueue.addEventListener('click', function() {
+            printReport('queue');
+        });
+    }
     
-    document.getElementById('print-settled').addEventListener('click', function() {
-        printReport('settled');
-    });
+    const printSettled = document.getElementById('print-settled');
+    if (printSettled) {
+        printSettled.addEventListener('click', function() {
+            printReport('settled');
+        });
+    }
     
-    document.getElementById('print-dorms').addEventListener('click', function() {
-        printReport('dorms');
-    });
+    const printDorms = document.getElementById('print-dorms');
+    if (printDorms) {
+        printDorms.addEventListener('click', function() {
+            printReport('dorms');
+        });
+    }
     
     // Закрытие модальных окон при клике вне их
     document.querySelectorAll('.modal').forEach(modal => {
@@ -203,13 +260,19 @@ function switchTab(tabId) {
     document.querySelectorAll('.tab-button').forEach(button => {
         button.classList.remove('active');
     });
-    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+    const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
     
     // Обновление активного контента вкладок
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
     });
-    document.getElementById(`${tabId}-tab`).classList.add('active');
+    const activeTab = document.getElementById(`${tabId}-tab`);
+    if (activeTab) {
+        activeTab.classList.add('active');
+    }
     
     // Обновление контента при переключении вкладок
     if (tabId === 'queue') {
@@ -225,11 +288,17 @@ function switchTab(tabId) {
 function renderDashboard() {
     const stats = calculateStats();
     
-    document.getElementById('dorm-count').textContent = stats.dormCount;
-    document.getElementById('living-count').textContent = stats.living;
-    document.getElementById('queue-count').textContent = stats.inQueue;
-    document.getElementById('free-count').textContent = stats.totalFree;
-    document.getElementById('occupancy-percent').textContent = `${stats.avgOccupancyPercent}%`;
+    const dormCount = document.getElementById('dorm-count');
+    const livingCount = document.getElementById('living-count');
+    const queueCount = document.getElementById('queue-count');
+    const freeCount = document.getElementById('free-count');
+    const occupancyPercent = document.getElementById('occupancy-percent');
+    
+    if (dormCount) dormCount.textContent = stats.dormCount;
+    if (livingCount) livingCount.textContent = stats.living;
+    if (queueCount) queueCount.textContent = stats.inQueue;
+    if (freeCount) freeCount.textContent = stats.totalFree;
+    if (occupancyPercent) occupancyPercent.textContent = `${stats.avgOccupancyPercent}%`;
 }
 
 // Расчет статистики
@@ -237,10 +306,10 @@ function calculateStats() {
     const dormCount = appState.dorms.length;
     const inQueue = appState.queue.length;
     const living = appState.settled.length;
-    const totalFree = appState.dorms.reduce((acc, d) => acc + d.free, 0);
-    const avgOccupancyPercent = Math.round(
-        (appState.dorms.reduce((acc, d) => acc + ((d.total - d.free) / d.total), 0) / (appState.dorms.length || 1)) * 100
-    );
+    const totalFree = appState.dorms.reduce((acc, d) => acc + (d.free || 0), 0);
+    const totalCapacity = appState.dorms.reduce((acc, d) => acc + (d.total || 1), 0);
+    const occupied = totalCapacity - totalFree;
+    const avgOccupancyPercent = Math.round((occupied / (totalCapacity || 1)) * 100);
     
     return { dormCount, inQueue, living, totalFree, avgOccupancyPercent };
 }
@@ -248,6 +317,8 @@ function calculateStats() {
 // Рендеринг очереди
 function renderQueue() {
     const queueList = document.getElementById('queue-list');
+    if (!queueList) return;
+    
     const filteredQueue = getFilteredQueue();
     
     queueList.innerHTML = '';
@@ -286,15 +357,21 @@ function renderQueue() {
         queueList.appendChild(queueItem);
         
         // Добавление обработчиков событий для кнопок
-        queueItem.querySelector('.settle-btn').addEventListener('click', function() {
-            const studentId = parseInt(this.getAttribute('data-student-id'));
-            openSettleConfirm(studentId);
-        });
+        const settleBtn = queueItem.querySelector('.settle-btn');
+        if (settleBtn) {
+            settleBtn.addEventListener('click', function() {
+                const studentId = parseInt(this.getAttribute('data-student-id'));
+                openSettleConfirm(studentId);
+            });
+        }
         
-        queueItem.querySelector('.reject-btn').addEventListener('click', function() {
-            const applicationId = parseInt(this.getAttribute('data-application-id'));
-            openRejectConfirm(applicationId);
-        });
+        const rejectBtn = queueItem.querySelector('.reject-btn');
+        if (rejectBtn) {
+            rejectBtn.addEventListener('click', function() {
+                const applicationId = parseInt(this.getAttribute('data-application-id'));
+                openRejectConfirm(applicationId);
+            });
+        }
     });
     
     // Обновление иконок
@@ -304,7 +381,7 @@ function renderQueue() {
 // Получение отфильтрованной очереди
 function getFilteredQueue() {
     return appState.queue
-        .filter(q => q.name.toLowerCase().includes(appState.search.queue.toLowerCase()))
+        .filter(q => q.name && q.name.toLowerCase().includes(appState.search.queue.toLowerCase()))
         .filter(q => q.score >= appState.filters.minScore && q.score <= appState.filters.maxScore)
         .filter(q => q.income >= appState.filters.minIncome && q.income <= appState.filters.maxIncome)
         .filter(q => (!appState.filters.onlyActivity || q.activity))
@@ -314,14 +391,16 @@ function getFilteredQueue() {
 
 // Получение бейджа приоритета
 function getPriorityBadge(priority) {
-    if (priority >= 120) return { text: "Высокий", class: "priority-high" };
-    if (priority >= 90) return { text: "Средний", class: "priority-medium" };
+    if (priority >= 650) return { text: "Высокий", class: "priority-high" };
+    if (priority >= 200) return { text: "Средний", class: "priority-medium" };
     return { text: "Низкий", class: "priority-low" };
 }
 
 // Рендеринг проживающих
 function renderSettled() {
     const settledList = document.getElementById('settled-list');
+    if (!settledList) return;
+    
     const filteredSettled = getFilteredSettled();
     
     settledList.innerHTML = '';
@@ -349,10 +428,13 @@ function renderSettled() {
         settledList.appendChild(settledItem);
         
         // Добавление обработчиков событий для кнопок
-        settledItem.querySelector('.evict-btn').addEventListener('click', function() {
-            const residentId = parseInt(this.getAttribute('data-resident-id'));
-            openEvictConfirm(residentId);
-        });
+        const evictBtn = settledItem.querySelector('.evict-btn');
+        if (evictBtn) {
+            evictBtn.addEventListener('click', function() {
+                const residentId = parseInt(this.getAttribute('data-resident-id'));
+                openEvictConfirm(residentId);
+            });
+        }
     });
     
     // Обновление иконок
@@ -362,13 +444,15 @@ function renderSettled() {
 // Получение отфильтрованных проживающих
 function getFilteredSettled() {
     return appState.settled.filter(s => 
-        s.name.toLowerCase().includes(appState.search.settled.toLowerCase())
+        s.name && s.name.toLowerCase().includes(appState.search.settled.toLowerCase())
     );
 }
 
 // Рендеринг общежитий
 function renderDorms() {
     const dormsGrid = document.getElementById('dorms-grid');
+    if (!dormsGrid) return;
+    
     const filteredDorms = getFilteredDorms();
     
     dormsGrid.innerHTML = '';
@@ -379,7 +463,7 @@ function renderDorms() {
     }
     
     filteredDorms.forEach(dorm => {
-        const percentFree = Math.round((dorm.free / dorm.total) * 100);
+        const percentFree = Math.round(((dorm.free || 0) / (dorm.total || 1)) * 100);
         const percentOccupied = 100 - percentFree;
         const status = getDormStatus(dorm);
         
@@ -395,7 +479,7 @@ function renderDorms() {
             </div>
             <div class="dorm-stats">
                 <div class="free-count">Свободно: ${dorm.free}</div>
-                <div class="occupied-count">Занято: ${dorm.total - dorm.free} / ${dorm.total}</div>
+                <div class="occupied-count">Занято: ${(dorm.total || 0) - (dorm.free || 0)} / ${dorm.total}</div>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" style="width: ${percentOccupied}%"></div>
@@ -409,7 +493,7 @@ function renderDorms() {
 
 // Получение статуса общежития
 function getDormStatus(dorm) {
-    const percentFree = Math.round((dorm.free / dorm.total) * 100);
+    const percentFree = Math.round(((dorm.free || 0) / (dorm.total || 1)) * 100);
     if (percentFree > 20) return "status-green";
     if (percentFree >= 5) return "status-yellow";
     return "status-red";
@@ -418,54 +502,68 @@ function getDormStatus(dorm) {
 // Получение отфильтрованных общежитий
 function getFilteredDorms() {
     let filtered = appState.dorms.filter(d => 
-        appState.filters.dormType === "all" || d.type === appState.filters.dormType
+        appState.filters.dormType === "all" || isDormTypeMatching(d.type, appState.filters.dormType)
     );
     
     if (appState.filters.onlyFree) {
-        filtered = filtered.filter(d => d.free > 0);
+        filtered = filtered.filter(d => (d.free || 0) > 0);
     }
     
-    return filtered.slice().sort((a, b) => b.free - a.free);
+    return filtered.slice().sort((a, b) => (b.free || 0) - (a.free || 0));
 }
 
-// Открытие модального окна фильтров очереди
-function openQueueFilterModal() {
-    document.getElementById('min-score').value = appState.filters.minScore;
-    document.getElementById('max-score').value = appState.filters.maxScore;
-    document.getElementById('min-income').value = appState.filters.minIncome;
-    document.getElementById('max-income').value = appState.filters.maxIncome;
-    document.getElementById('only-activity').checked = appState.filters.onlyActivity;
-    
-    document.getElementById('queue-filter-modal').classList.add('active');
-}
-
-// Закрытие модального окна фильтров очереди
-function closeQueueFilterModal() {
-    document.getElementById('queue-filter-modal').classList.remove('active');
-}
-
-// Применение фильтров очереди
-function applyQueueFilters() {
-    appState.filters.minScore = Number(document.getElementById('min-score').value) || 0;
-    appState.filters.maxScore = Number(document.getElementById('max-score').value) || 100;
-    appState.filters.minIncome = Number(document.getElementById('min-income').value) || 0;
-    appState.filters.maxIncome = Number(document.getElementById('max-income').value) || 999999;
-    appState.filters.onlyActivity = document.getElementById('only-activity').checked;
-    
-    closeQueueFilterModal();
-    renderQueue();
-}
-
-// Автоматический выбор общежития
+// Автоматический выбор общежития с проверкой типа
 function autoSelectDorm(desiredType) {
     const candidates = appState.dorms.filter(d => 
-        (desiredType ? d.type === desiredType : true) && d.free > 0
+        (desiredType ? isDormTypeMatching(d.type, desiredType) : true) && (d.free || 0) > 0
     );
     
     if (!candidates.length) return null;
     
-    candidates.sort((a, b) => b.free - a.free);
+    candidates.sort((a, b) => (b.free || 0) - (a.free || 0));
     return candidates[0];
+}
+
+// Открытие модального окна фильтров очереди
+function openQueueFilterModal() {
+    const minScore = document.getElementById('min-score');
+    const maxScore = document.getElementById('max-score');
+    const minIncome = document.getElementById('min-income');
+    const maxIncome = document.getElementById('max-income');
+    const onlyActivity = document.getElementById('only-activity');
+    
+    if (minScore) minScore.value = appState.filters.minScore;
+    if (maxScore) maxScore.value = appState.filters.maxScore;
+    if (minIncome) minIncome.value = appState.filters.minIncome;
+    if (maxIncome) maxIncome.value = appState.filters.maxIncome;
+    if (onlyActivity) onlyActivity.checked = appState.filters.onlyActivity;
+    
+    const modal = document.getElementById('queue-filter-modal');
+    if (modal) modal.classList.add('active');
+}
+
+// Закрытие модального окна фильтров очереди
+function closeQueueFilterModal() {
+    const modal = document.getElementById('queue-filter-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+// Применение фильтров очереди
+function applyQueueFilters() {
+    const minScore = document.getElementById('min-score');
+    const maxScore = document.getElementById('max-score');
+    const minIncome = document.getElementById('min-income');
+    const maxIncome = document.getElementById('max-income');
+    const onlyActivity = document.getElementById('only-activity');
+    
+    if (minScore) appState.filters.minScore = Number(minScore.value) || 0;
+    if (maxScore) appState.filters.maxScore = Number(maxScore.value) || 100;
+    if (minIncome) appState.filters.minIncome = Number(minIncome.value) || 0;
+    if (maxIncome) appState.filters.maxIncome = Number(maxIncome.value) || 999999;
+    if (onlyActivity) appState.filters.onlyActivity = onlyActivity.checked;
+    
+    closeQueueFilterModal();
+    renderQueue();
 }
 
 // Установка действия подтверждения
@@ -474,7 +572,7 @@ function setConfirmAction(action) {
     showConfirmModal();
 }
 
-// Открытие подтверждения заселения
+// Открытие подтверждения заселения с проверкой типа
 function openSettleConfirm(studentId) {
     const student = appState.queue.find(s => s.studentId === studentId);
     if (!student) return;
@@ -483,6 +581,7 @@ function openSettleConfirm(studentId) {
     setConfirmAction({
         type: "settle",
         studentId: studentId,
+        studentDesiredType: student.desiredType, // Сохраняем желаемый тип студента
         recommendedDormId: recommended ? recommended.id : null,
         selectedDormId: recommended ? recommended.id : null
     });
@@ -504,42 +603,66 @@ function openEvictConfirm(residentId) {
     });
 }
 
-// Показать модальное окно подтверждения
+// Показать модальное окно подтверждения с проверкой типов
 function showConfirmModal() {
     const confirmContent = document.getElementById('confirm-content');
+    if (!confirmContent) return;
     
     if (appState.confirmAction.type === 'settle') {
         const student = appState.queue.find(s => s.studentId === appState.confirmAction.studentId);
         const recommendedDorm = appState.dorms.find(d => d.id === appState.confirmAction.recommendedDormId);
         
+        // Получаем доступные общежития с проверкой типа
+        const availableDorms = appState.dorms.filter(d => 
+            (d.free || 0) > 0 && 
+            (appState.confirmAction.studentDesiredType ? isDormTypeMatching(d.type, appState.confirmAction.studentDesiredType) : true)
+        );
+        
         confirmContent.innerHTML = `
             <h3>Заселение — выбор общежития</h3>
-            <div class="student-details">Студент: <b>${student.name}</b> · Желаемый тип: <b>${student.desiredType}</b></div>
+            <div class="student-details">Студент: <b>${student.name}</b></div>
+            <div class="student-details">Желаемый тип: <b>${student.desiredType || 'Не указан'}</b></div>
             
             <div class="mt-3">
                 <div class="student-details">Рекомендуемое общежитие:</div>
-                <div class="student-name">${recommendedDorm ? recommendedDorm.address : 'Нет доступных'}</div>
+                <div class="student-name">${recommendedDorm ? `${recommendedDorm.address} (Тип: ${recommendedDorm.type})` : 'Нет доступных'}</div>
             </div>
             
             <div class="mt-3">
+                <label class="student-details">Выберите общежитие:</label>
                 <select id="dorm-select" class="confirm-select">
-                    ${appState.dorms
-                        .filter(d => d.free > 0 && (student.desiredType ? d.type === student.desiredType : true))
-                        .map(d => `<option value="${d.id}" ${d.id === appState.confirmAction.selectedDormId ? 'selected' : ''}>№${d.id} · ${d.address} (Свободно: ${d.free})</option>`)
-                        .join('')}
+                    ${availableDorms.length > 0 
+                        ? availableDorms.map(d => 
+                            `<option value="${d.id}" ${d.id === appState.confirmAction.selectedDormId ? 'selected' : ''}>
+                                №${d.id} · ${d.address} (Тип: ${d.type}, Свободно: ${d.free})
+                            </option>`
+                          ).join('')
+                        : '<option value="">Нет доступных общежитий подходящего типа</option>'
+                    }
                 </select>
             </div>
             
+            ${availableDorms.length === 0 ? `
+                <div class="mt-3 warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Нет доступных общежитий типа "${student.desiredType}". 
+                    Рассмотрите возможность изменения типа общежития для студента.
+                </div>
+            ` : ''}
+            
             <div class="modal-actions">
                 <button id="cancel-confirm" class="cancel-btn">Отмена</button>
-                <button id="apply-confirm" class="confirm-btn">Заселить</button>
+                <button id="apply-confirm" class="confirm-btn" ${availableDorms.length === 0 ? 'disabled' : ''}>Заселить</button>
             </div>
         `;
         
         // Обработчик изменения выбора общежития
-        document.getElementById('dorm-select').addEventListener('change', function(e) {
-            appState.confirmAction.selectedDormId = Number(e.target.value);
-        });
+        const dormSelect = document.getElementById('dorm-select');
+        if (dormSelect) {
+            dormSelect.addEventListener('change', function(e) {
+                appState.confirmAction.selectedDormId = Number(e.target.value);
+            });
+        }
     } else {
         const actionText = appState.confirmAction.type === 'reject' ? 'Отклонить заявку?' : 'Выселить студента?';
         
@@ -554,24 +677,47 @@ function showConfirmModal() {
     }
     
     // Обработчики для кнопок подтверждения
-    document.getElementById('cancel-confirm').addEventListener('click', cancelConfirm);
-    document.getElementById('apply-confirm').addEventListener('click', applyConfirm);
+    const cancelConfirm = document.getElementById('cancel-confirm');
+    if (cancelConfirm) {
+        cancelConfirm.addEventListener('click', cancelConfirm);
+    }
     
-    document.getElementById('confirm-modal').classList.add('active');
+    const applyConfirm = document.getElementById('apply-confirm');
+    if (applyConfirm) {
+        applyConfirm.addEventListener('click', applyConfirmAction);
+    }
+    
+    const modal = document.getElementById('confirm-modal');
+    if (modal) {
+        modal.classList.add('active');
+    }
 }
 
 // Отмена подтверждения
 function cancelConfirm() {
     appState.confirmAction = null;
-    document.getElementById('confirm-modal').classList.remove('active');
+    const modal = document.getElementById('confirm-modal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
 }
 
 // Применение подтверждения
-async function applyConfirm() {
+async function applyConfirmAction() {
     if (!appState.confirmAction) return;
 
     try {
         if (appState.confirmAction.type === 'settle') {
+            // Дополнительная проверка типа перед заселением
+            const student = appState.queue.find(s => s.studentId === appState.confirmAction.studentId);
+            const selectedDorm = appState.dorms.find(d => d.id === appState.confirmAction.selectedDormId);
+            
+            if (student && selectedDorm && !isDormTypeMatching(student.desiredType, selectedDorm.type)) {
+                if (!confirm(`Внимание! Студент желает общежитие типа "${student.desiredType}", но выбран тип "${selectedDorm.type}". Продолжить заселение?`)) {
+                    return;
+                }
+            }
+            
             await apiPost('/settle', {
                 studentId: appState.confirmAction.studentId,
                 dormitoryId: Number(appState.confirmAction.selectedDormId)
@@ -646,6 +792,113 @@ style.textContent = `
         padding: 2rem;
         color: #6b7280;
         font-style: italic;
+    }
+    
+    .priority-high {
+        background: #dc2626;
+        color: white;
+    }
+    
+    .priority-medium {
+        background: #ea580c;
+        color: white;
+    }
+    
+    .priority-low {
+        background: #16a34a;
+        color: white;
+    }
+    
+    .status-green {
+        background: #16a34a;
+    }
+    
+    .status-yellow {
+        background: #eab308;
+    }
+    
+    .status-red {
+        background: #dc2626;
+    }
+    
+    .dorm-status {
+        height: 4px;
+        border-radius: 2px 2px 0 0;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 8px 0;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: #3b82f6;
+        transition: width 0.3s ease;
+    }
+    
+    .warning-message {
+        background: #fef3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 4px;
+        padding: 12px;
+        color: #856404;
+        font-size: 0.9rem;
+    }
+    
+    .warning-message i {
+        color: #f39c12;
+        margin-right: 8px;
+    }
+    
+    .confirm-select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+    
+    .cancel-btn {
+        padding: 8px 16px;
+        background: #6b7280;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .cancel-btn:hover {
+        background: #4b5563;
+    }
+    
+    .confirm-btn {
+        padding: 8px 16px;
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .confirm-btn:hover:not(:disabled) {
+        background: #2563eb;
+    }
+    
+    .confirm-btn:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
     }
 `;
 document.head.appendChild(style);
