@@ -1,864 +1,553 @@
-// FunctionAdmin.js
-const adminTranslations = {
-    ru: {
-        admin_title: "Панель управления общежитиями",
-        btn_back: "Назад",
-        btn_refresh: "Обновить",
-        btn_refresh_list: "Обновить список",
-        nav_queue: "Очередь",
-        nav_dormitories: "Общежития",
-        nav_residents: "Заселенные",
-        nav_reports: "Отчеты",
-        queue_title: "Очередь на заселение",
-        dormitories_title: "Управление общежитиями",
-        residents_title: "Заселенные студенты",
-        reports_title: "Отчеты и статистика",
-        filter_all_types: "Все типы",
-        filter_family: "Семейные",
-        filter_single: "Несемейные",
-        filter_all_dorms: "Все общежития",
-        status_pending: "В ожидании",
-        status_approved: "Одобренные",
-        status_all: "Все",
-        report_vacancy: "Свободные места",
-        report_queue: "Статистика очереди",
-        report_settlement: "Статистика заселения",
-        report_click_generate: "Нажмите для генерации отчета",
-        no_data: "Нет данных",
-        error_loading: "Ошибка загрузки данных",
-        settle_confirm: "Заселить этого студента?",
-        reject_confirm: "Отклонить эту заявку?",
-        evict_confirm: "Выселить этого студента?",
-        success_settle: "Студент успешно заселен!",
-        success_reject: "Заявка отклонена!",
-        success_evict: "Студент выселен!",
-        error_action: "Ошибка при выполнении действия",
-        total_capacity: "Всего мест",
-        occupied: "Занято",
-        free: "Свободно",
-        vacancy_rate: "Свободно (%)",
-        dorm_type: "Тип",
-        total_in_queue: "Всего в очереди",
-        high_priority: "Высокий приоритет",
-        medium_priority: "Средний приоритет",
-        low_priority: "Низкий приоритет",
-        total_settled: "Заселено всего",
-        this_month: "За текущий месяц",
-        avg_wait_time: "Среднее время в очереди",
-        days: "дней",
-        rooms: "Комнаты",
-        room: "Комната",
-        residents: "Жильцы",
-        free_rooms: "Свободные комнаты",
-        btn_settle: "Заселить",
-        btn_reject: "Отклонить",
-        btn_evict: "Выселить",
-        btn_refresh_queue: "Обновить очередь",
-        search_placeholder: "Поиск по имени",
-        phone: "Телефон",
-        gpa: "Средний балл",
-        income: "Доход на члена семьи",
-        public_work: "Общественная работа",
-        application_date: "Дата заявки",
-        check_in_date: "Дата заселения",
-        no_free_rooms: "Нет свободных комнат"
+// Инициализация иконок Lucide
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+    
+    // Инициализация приложения
+    initApp();
+});
+
+// Данные приложения
+let appState = {
+    dorms: [
+        { id: 1, address: "ул. Ломоносова, 12", type: "семейное", total: 120, free: 14, feature: "Отдельные кухни" },
+        { id: 2, address: "ул. Советская, 8", type: "несемейное", total: 300, free: 42, feature: "Спортивный зал" },
+        { id: 3, address: "ул. Гагарина, 25", type: "несемейное", total: 250, free: 3, feature: "Большая библиотека" }
+    ],
+    queue: [
+        { id: 1, name: "Иванов И.И.", priority: 134, desiredType: "несемейное", score: 91, income: 12000, activity: true, applicationDate: "2025-11-01", birth: "2004-06-01", phone: "+7 900 111-22-33" },
+        { id: 2, name: "Петрова А.Н.", priority: 98, desiredType: "семейное", score: 89, income: 15500, activity: false, applicationDate: "2025-10-20", birth: "2003-01-12", phone: "+7 900 444-55-66" },
+        { id: 3, name: "Смирнов Д.А.", priority: 110, desiredType: "несемейное", score: 85, income: 10000, activity: true, applicationDate: "2025-11-10", birth: "2005-09-10", phone: "+7 900 777-88-99" }
+    ],
+    settled: [
+        { id: 1, name: "Кузнецов А.А.", dorm: "ул. Ломоносова, 12", settleDate: "2025-09-01", evictionDate: null },
+        { id: 2, name: "Горбунова Е.В.", dorm: "ул. Советская, 8", settleDate: "2025-08-15", evictionDate: null }
+    ],
+    filters: {
+        dormType: "all",
+        onlyFree: false,
+        minScore: 0,
+        maxScore: 100,
+        minIncome: 0,
+        maxIncome: 999999,
+        onlyActivity: false
     },
-    en: {
-        admin_title: "Dormitory Management Panel",
-        btn_back: "Back",
-        btn_refresh: "Refresh",
-        btn_refresh_list: "Refresh List",
-        nav_queue: "Queue",
-        nav_dormitories: "Dormitories",
-        nav_residents: "Residents",
-        nav_reports: "Reports",
-        queue_title: "Settlement Queue",
-        dormitories_title: "Dormitories Management",
-        residents_title: "Settled Students",
-        reports_title: "Reports and Statistics",
-        filter_all_types: "All Types",
-        filter_family: "Family",
-        filter_single: "Single",
-        filter_all_dorms: "All Dormitories",
-        status_pending: "Pending",
-        status_approved: "Approved",
-        status_all: "All",
-        report_vacancy: "Vacant Places",
-        report_queue: "Queue Statistics",
-        report_settlement: "Settlement Statistics",
-        report_click_generate: "Click to generate report",
-        no_data: "No data",
-        error_loading: "Error loading data",
-        settle_confirm: "Settle this student?",
-        reject_confirm: "Reject this application?",
-        evict_confirm: "Evict this student?",
-        success_settle: "Student settled successfully!",
-        success_reject: "Application rejected!",
-        success_evict: "Student evicted!",
-        error_action: "Error performing action",
-        total_capacity: "Total Capacity",
-        occupied: "Occupied",
-        free: "Free",
-        vacancy_rate: "Vacancy Rate",
-        dorm_type: "Type",
-        total_in_queue: "Total in queue",
-        high_priority: "High priority",
-        medium_priority: "Medium priority",
-        low_priority: "Low priority",
-        total_settled: "Total settled",
-        this_month: "This month",
-        avg_wait_time: "Average wait time",
-        days: "days",
-        rooms: "Rooms",
-        room: "Room",
-        residents: "Residents",
-        free_rooms: "Free rooms",
-        btn_settle: "Settle",
-        btn_reject: "Reject",
-        btn_evict: "Evict",
-        btn_refresh_queue: "Refresh Queue",
-        search_placeholder: "Search by name",
-        phone: "Phone",
-        gpa: "GPA",
-        income: "Income per family member",
-        public_work: "Public work",
-        application_date: "Application date",
-        check_in_date: "Check-in date",
-        no_free_rooms: "No free rooms"
+    search: {
+        queue: "",
+        settled: ""
     },
-    es: {
-        admin_title: "Panel de Gestión de Residencias",
-        btn_back: "Atrás",
-        btn_refresh: "Actualizar",
-        btn_refresh_list: "Actualizar Lista",
-        nav_queue: "Cola",
-        nav_dormitories: "Residencias",
-        nav_residents: "Residentes",
-        nav_reports: "Informes",
-        queue_title: "Cola de Asignación",
-        dormitories_title: "Gestión de Residencias",
-        residents_title: "Estudiantes Alojados",
-        reports_title: "Informes y Estadísticas",
-        filter_all_types: "Todos los Tipos",
-        filter_family: "Familiar",
-        filter_single: "Individual",
-        filter_all_dorms: "Todas las Residencias",
-        status_pending: "Pendiente",
-        status_approved: "Aprobado",
-        status_all: "Todos",
-        report_vacancy: "Plazas Vacantes",
-        report_queue: "Estadísticas de Cola",
-        report_settlement: "Estadísticas de Asignación",
-        report_click_generate: "Haga clic para generar informe",
-        no_data: "No hay datos",
-        error_loading: "Error al cargar datos",
-        settle_confirm: "¿Alojar a este estudiante?",
-        reject_confirm: "¿Rechazar esta solicitud?",
-        evict_confirm: "¿Desalojar a este estudiante?",
-        success_settle: "¡Estudiante alojado con éxito!",
-        success_reject: "¡Solicitud rechazada!",
-        success_evict: "¡Estudiante desalojado!",
-        error_action: "Error al realizar la acción",
-        total_capacity: "Capacidad Total",
-        occupied: "Ocupado",
-        free: "Libre",
-        vacancy_rate: "Tasa de Ocupación",
-        dorm_type: "Tipo",
-        total_in_queue: "Total en cola",
-        high_priority: "Alta prioridad",
-        medium_priority: "Prioridad media",
-        low_priority: "Baja prioridad",
-        total_settled: "Total alojados",
-        this_month: "Este mes",
-        avg_wait_time: "Tiempo medio de espera",
-        days: "días",
-        rooms: "Habitaciones",
-        room: "Habitación",
-        residents: "Residentes",
-        free_rooms: "Habitaciones libres",
-        btn_settle: "Alojar",
-        btn_reject: "Rechazar",
-        btn_evict: "Desalojar",
-        btn_refresh_queue: "Actualizar Cola",
-        search_placeholder: "Buscar por nombre",
-        phone: "Teléfono",
-        gpa: "Promedio",
-        income: "Ingreso por miembro familiar",
-        public_work: "Trabajo público",
-        application_date: "Fecha de solicitud",
-        check_in_date: "Fecha de ingreso",
-        no_free_rooms: "No hay habitaciones libres"
-    }
+    confirmAction: null
 };
 
-let currentLang = 'ru';
-let currentSection = 'queue';
-
-function initAdminPage() {
+// Инициализация приложения
+function initApp() {
+    // Настройка обработчиков событий
     setupEventListeners();
-    loadSavedTheme();
-    loadSavedLanguage();
-    updateTranslations();
-    loadQueue();
-    loadDormitories();
-    loadResidents();
+    
+    // Первоначальный рендеринг
+    renderDashboard();
+    renderQueue();
+    renderSettled();
+    renderDorms();
 }
 
+// Настройка обработчиков событий
 function setupEventListeners() {
-    const languageBtn = document.getElementById('languageBtn');
-    if (languageBtn) languageBtn.addEventListener('click', toggleLanguageDropdown);
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-    document.addEventListener('click', closeLanguageDropdown);
-
-    document.querySelectorAll('.language-option').forEach(option => {
-        option.addEventListener('click', function() {
-            const lang = this.getAttribute('data-lang');
-            changeLanguage(lang);
+    // Переключение вкладок
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            switchTab(tabId);
         });
     });
-
-    const dormFilter = document.getElementById('dormFilter');
-    const statusFilter = document.getElementById('statusFilter');
-    const residentDormFilter = document.getElementById('residentDormFilter');
-    const dormitoriesTypeFilter = document.getElementById('dormitoriesTypeFilter');
-
-    if (dormFilter) dormFilter.addEventListener('change', loadQueue);
-    if (statusFilter) statusFilter.addEventListener('change', loadQueue);
-    if (residentDormFilter) residentDormFilter.addEventListener('change', loadResidents);
-    if (dormitoriesTypeFilter) dormitoriesTypeFilter.addEventListener('change', loadDormitories);
-}
-
-function toggleLanguageDropdown(e) {
-    e.stopPropagation();
-    const dropdown = document.getElementById('languageDropdown');
-    if (dropdown) dropdown.classList.toggle('show');
-}
-
-function closeLanguageDropdown(e) {
-    if (!e.target.closest('.language-selector')) {
-        const dropdown = document.getElementById('languageDropdown');
-        if (dropdown) dropdown.classList.remove('show');
-    }
-}
-
-function changeLanguage(lang) {
-    currentLang = lang || 'ru';
-    updateTranslations();
-    const curEl = document.getElementById('currentLanguage');
-    if (curEl) curEl.textContent = lang === 'ru' ? 'Русский' : lang === 'en' ? 'English' : 'Español';
-    localStorage.setItem('preferredLanguage', lang);
-    const dropdown = document.getElementById('languageDropdown');
-    if (dropdown) dropdown.classList.remove('show');
-}
-
-function updateTranslations() {
-    const langData = adminTranslations[currentLang] || adminTranslations.ru;
-    document.querySelectorAll('[data-translate]').forEach(element => {
-        const key = element.getAttribute('data-translate');
-        if (langData[key]) element.textContent = langData[key];
+    
+    // Поиск в очереди
+    document.getElementById('queue-search').addEventListener('input', function(e) {
+        appState.search.queue = e.target.value;
+        renderQueue();
     });
     
-    // Update search placeholders
-    const searchInput = document.getElementById('searchByName');
-    if (searchInput) searchInput.placeholder = langData.search_placeholder;
-    
-    const searchResidentInput = document.getElementById('searchResidentByName');
-    if (searchResidentInput) searchResidentInput.placeholder = langData.search_placeholder;
-    
-    updateSelectOptions();
-}
-
-function updateSelectOptions() {
-    const langData = adminTranslations[currentLang];
-    
-    const dormFilter = document.getElementById('dormFilter');
-    if (dormFilter) {
-        dormFilter.options[0].text = langData.filter_all_types;
-        if (dormFilter.options[1]) dormFilter.options[1].text = langData.filter_family;
-        if (dormFilter.options[2]) dormFilter.options[2].text = langData.filter_single;
-    }
-
-    const statusFilter = document.getElementById('statusFilter');
-    if (statusFilter) {
-        if (statusFilter.options[0]) statusFilter.options[0].text = langData.status_pending;
-        if (statusFilter.options[1]) statusFilter.options[1].text = langData.status_approved;
-        if (statusFilter.options[2]) statusFilter.options[2].text = langData.status_all;
-    }
-
-    const residentDormFilter = document.getElementById('residentDormFilter');
-    if (residentDormFilter && residentDormFilter.options.length > 0) {
-        residentDormFilter.options[0].text = langData.filter_all_dorms;
-    }
-
-    const dormitoriesTypeFilter = document.getElementById('dormitoriesTypeFilter');
-    if (dormitoriesTypeFilter) {
-        dormitoriesTypeFilter.options[0].text = langData.filter_all_types;
-        if (dormitoriesTypeFilter.options[1]) dormitoriesTypeFilter.options[1].text = langData.filter_family;
-        if (dormitoriesTypeFilter.options[2]) dormitoriesTypeFilter.options[2].text = langData.filter_single;
-    }
-}
-
-function toggleTheme() {
-    const body = document.body;
-    const themeToggle = document.getElementById('themeToggle');
-    body.classList.toggle('dark-theme');
-    if (body.classList.contains('dark-theme')) {
-        if (themeToggle) themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        localStorage.setItem('theme', 'dark');
-    } else {
-        if (themeToggle) themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        localStorage.setItem('theme', 'light');
-    }
-}
-
-function loadSavedTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    const themeToggle = document.getElementById('themeToggle');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-        if (themeToggle) themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-    }
-}
-
-function loadSavedLanguage() {
-    const savedLanguage = localStorage.getItem('preferredLanguage') || 'ru';
-    changeLanguage(savedLanguage);
-}
-
-// =======================
-// Навигация секций
-// =======================
-function showSection(sectionName) {
-    document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    const target = document.getElementById(sectionName + '-section');
-    if (target) target.classList.add('active');
-
-    const caller = Array.from(document.querySelectorAll('.nav-btn')).find(b => {
-        const attr = b.getAttribute('onclick') || '';
-        return attr.includes(`showSection('${sectionName}')`) || attr.includes(`showSection("${sectionName}")`);
+    // Поиск в проживающих
+    document.getElementById('settled-search').addEventListener('input', function(e) {
+        appState.search.settled = e.target.value;
+        renderSettled();
     });
-    if (caller) caller.classList.add('active');
-
-    currentSection = sectionName;
-    if (sectionName === 'queue') loadQueue();
-    if (sectionName === 'dormitories') loadDormitories();
-    if (sectionName === 'residents') loadResidents();
-}
-
-// Мэппинг значения фильтра типа (frontend -> backend)
-function mapDormFilterValue(val) {
-    if (!val) return '';
-    if (val === 'family') return 'семейное';
-    if (val === 'single') return 'несемейное';
-    return val;
-}
-
-// =======================
-// Загрузка и отображение очереди
-// =======================
-async function loadQueue() {
-    const dormFilterRaw = document.getElementById('dormFilter') ? document.getElementById('dormFilter').value : '';
-    const dormFilter = mapDormFilterValue(dormFilterRaw);
-    const statusFilterRaw = document.getElementById('statusFilter') ? document.getElementById('statusFilter').value : 'all';
-    const searchByName = document.getElementById('searchByName') ? document.getElementById('searchByName').value : '';
     
-    const statusMap = {
-        'all': 'all',
-        'pending': 'pending',
-        'approved': 'approved'
+    // Фильтры общежитий
+    document.getElementById('dorm-type-filter').addEventListener('change', function(e) {
+        appState.filters.dormType = e.target.value;
+        renderDorms();
+    });
+    
+    document.getElementById('only-free-toggle').addEventListener('change', function(e) {
+        appState.filters.onlyFree = e.target.checked;
+        renderDorms();
+    });
+    
+    // Модальное окно фильтров очереди
+    document.getElementById('queue-filter-btn').addEventListener('click', function() {
+        openQueueFilterModal();
+    });
+    
+    document.getElementById('close-filter-modal').addEventListener('click', function() {
+        closeQueueFilterModal();
+    });
+    
+    document.getElementById('apply-filters').addEventListener('click', function() {
+        applyQueueFilters();
+    });
+    
+    // Печать отчетов
+    document.getElementById('print-queue').addEventListener('click', function() {
+        printReport('queue');
+    });
+    
+    document.getElementById('print-settled').addEventListener('click', function() {
+        printReport('settled');
+    });
+    
+    document.getElementById('print-dorms').addEventListener('click', function() {
+        printReport('dorms');
+    });
+    
+    // Закрытие модальных окон при клике вне их
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+    });
+}
+
+// Переключение вкладок
+function switchTab(tabId) {
+    // Обновление активных кнопок вкладок
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+    
+    // Обновление активного контента вкладок
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(`${tabId}-tab`).classList.add('active');
+    
+    // Обновление контента при переключении вкладок
+    if (tabId === 'queue') {
+        renderQueue();
+    } else if (tabId === 'settled') {
+        renderSettled();
+    } else if (tabId === 'dorms') {
+        renderDorms();
+    }
+}
+
+// Рендеринг дашборда
+function renderDashboard() {
+    const stats = calculateStats();
+    
+    document.getElementById('dorm-count').textContent = stats.dormCount;
+    document.getElementById('living-count').textContent = stats.living;
+    document.getElementById('queue-count').textContent = stats.inQueue;
+    document.getElementById('free-count').textContent = stats.totalFree;
+    document.getElementById('occupancy-percent').textContent = `${stats.avgOccupancyPercent}%`;
+}
+
+// Расчет статистики
+function calculateStats() {
+    const dormCount = appState.dorms.length;
+    const inQueue = appState.queue.length;
+    const living = appState.settled.length;
+    const totalFree = appState.dorms.reduce((acc, d) => acc + d.free, 0);
+    const avgOccupancyPercent = Math.round(
+        (appState.dorms.reduce((acc, d) => acc + ((d.total - d.free) / d.total), 0) / (appState.dorms.length || 1)) * 100
+    );
+    
+    return { dormCount, inQueue, living, totalFree, avgOccupancyPercent };
+}
+
+// Рендеринг очереди
+function renderQueue() {
+    const queueList = document.getElementById('queue-list');
+    const filteredQueue = getFilteredQueue();
+    
+    queueList.innerHTML = '';
+    
+    filteredQueue.forEach(student => {
+        const badge = getPriorityBadge(student.priority);
+        
+        const queueItem = document.createElement('div');
+        queueItem.className = 'queue-item';
+        queueItem.innerHTML = `
+            <div class="queue-info">
+                <div class="queue-header">
+                    <div class="priority-badge ${badge.class}">${badge.text}</div>
+                    <div>
+                        <div class="student-name">${student.name}</div>
+                        <div class="student-details">Заявка: ${student.applicationDate} · Приоритет: <span class="font-bold">${student.priority}</span></div>
+                    </div>
+                </div>
+                <div class="student-details">Баллы: ${student.score} · Доход: ${student.income} · Общественная работа: ${student.activity ? 'Да' : 'Нет'}</div>
+            </div>
+            <div class="queue-actions">
+                <button class="action-btn settle-btn" data-id="${student.id}">
+                    <i data-lucide="plus"></i> Заселить
+                </button>
+                <button class="action-btn reject-btn" data-id="${student.id}">
+                    Отклонить
+                </button>
+            </div>
+        `;
+        
+        queueList.appendChild(queueItem);
+        
+        // Добавление обработчиков событий для кнопок
+        queueItem.querySelector('.settle-btn').addEventListener('click', function() {
+            openSettleConfirm(student.id);
+        });
+        
+        queueItem.querySelector('.reject-btn').addEventListener('click', function() {
+            openRejectConfirm(student.id);
+        });
+    });
+    
+    // Обновление иконок
+    lucide.createIcons();
+}
+
+// Получение отфильтрованной очереди
+function getFilteredQueue() {
+    return appState.queue
+        .filter(q => q.name.toLowerCase().includes(appState.search.queue.toLowerCase()))
+        .filter(q => q.score >= appState.filters.minScore && q.score <= appState.filters.maxScore)
+        .filter(q => q.income >= appState.filters.minIncome && q.income <= appState.filters.maxIncome)
+        .filter(q => (!appState.filters.onlyActivity || q.activity))
+        .slice()
+        .sort((a, b) => b.priority - a.priority);
+}
+
+// Получение бейджа приоритета
+function getPriorityBadge(priority) {
+    if (priority >= 120) return { text: "Высокий", class: "priority-high" };
+    if (priority >= 90) return { text: "Средний", class: "priority-medium" };
+    return { text: "Низкий", class: "priority-low" };
+}
+
+// Рендеринг проживающих
+function renderSettled() {
+    const settledList = document.getElementById('settled-list');
+    const filteredSettled = getFilteredSettled();
+    
+    settledList.innerHTML = '';
+    
+    filteredSettled.forEach(resident => {
+        const settledItem = document.createElement('div');
+        settledItem.className = 'settled-item';
+        settledItem.innerHTML = `
+            <div>
+                <div class="student-name">${resident.name}</div>
+                <div class="student-details">Общежитие: ${resident.dorm} · Заселен: ${resident.settleDate}</div>
+            </div>
+            <div class="settled-actions">
+                <button class="action-btn evict-btn" data-id="${resident.id}">
+                    <i data-lucide="door-closed"></i> Выселить
+                </button>
+            </div>
+        `;
+        
+        settledList.appendChild(settledItem);
+        
+        // Добавление обработчиков событий для кнопок
+        settledItem.querySelector('.evict-btn').addEventListener('click', function() {
+            openEvictConfirm(resident.id);
+        });
+    });
+    
+    // Обновление иконок
+    lucide.createIcons();
+}
+
+// Получение отфильтрованных проживающих
+function getFilteredSettled() {
+    return appState.settled.filter(s => 
+        s.name.toLowerCase().includes(appState.search.settled.toLowerCase())
+    );
+}
+
+// Рендеринг общежитий
+function renderDorms() {
+    const dormsGrid = document.getElementById('dorms-grid');
+    const filteredDorms = getFilteredDorms();
+    
+    dormsGrid.innerHTML = '';
+    
+    filteredDorms.forEach(dorm => {
+        const percentFree = Math.round((dorm.free / dorm.total) * 100);
+        const percentOccupied = 100 - percentFree;
+        const status = getDormStatus(dorm);
+        
+        const dormCard = document.createElement('div');
+        dormCard.className = 'dorm-card';
+        dormCard.innerHTML = `
+            <div class="dorm-status ${status}"></div>
+            <div class="dorm-title">Общежитие #${dorm.id}</div>
+            <div class="dorm-info">
+                <p><b>Адрес:</b> ${dorm.address}</p>
+                <p><b>Тип:</b> ${dorm.type}</p>
+                <p><b>Особенность:</b> ${dorm.feature}</p>
+            </div>
+            <div class="dorm-stats">
+                <div class="free-count">Свободно: ${dorm.free}</div>
+                <div class="occupied-count">Занято: ${dorm.total - dorm.free} / ${dorm.total}</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: ${percentOccupied}%"></div>
+            </div>
+            <div class="occupancy-text">Заполнено: ${percentOccupied}%</div>
+        `;
+        
+        dormsGrid.appendChild(dormCard);
+    });
+}
+
+// Получение статуса общежития
+function getDormStatus(dorm) {
+    const percentFree = Math.round((dorm.free / dorm.total) * 100);
+    if (percentFree > 20) return "status-green";
+    if (percentFree >= 5) return "status-yellow";
+    return "status-red";
+}
+
+// Получение отфильтрованных общежитий
+function getFilteredDorms() {
+    let filtered = appState.dorms.filter(d => 
+        appState.filters.dormType === "all" || d.type === appState.filters.dormType
+    );
+    
+    if (appState.filters.onlyFree) {
+        filtered = filtered.filter(d => d.free > 0);
+    }
+    
+    return filtered.slice().sort((a, b) => b.free - a.free);
+}
+
+// Открытие модального окна фильтров очереди
+function openQueueFilterModal() {
+    document.getElementById('min-score').value = appState.filters.minScore;
+    document.getElementById('max-score').value = appState.filters.maxScore;
+    document.getElementById('min-income').value = appState.filters.minIncome;
+    document.getElementById('max-income').value = appState.filters.maxIncome;
+    document.getElementById('only-activity').checked = appState.filters.onlyActivity;
+    
+    document.getElementById('queue-filter-modal').classList.add('active');
+}
+
+// Закрытие модального окна фильтров очереди
+function closeQueueFilterModal() {
+    document.getElementById('queue-filter-modal').classList.remove('active');
+}
+
+// Применение фильтров очереди
+function applyQueueFilters() {
+    appState.filters.minScore = Number(document.getElementById('min-score').value) || 0;
+    appState.filters.maxScore = Number(document.getElementById('max-score').value) || 100;
+    appState.filters.minIncome = Number(document.getElementById('min-income').value) || 0;
+    appState.filters.maxIncome = Number(document.getElementById('max-income').value) || 999999;
+    appState.filters.onlyActivity = document.getElementById('only-activity').checked;
+    
+    closeQueueFilterModal();
+    renderQueue();
+}
+
+// Автоматический выбор общежития
+function autoSelectDorm(desiredType) {
+    const candidates = appState.dorms.filter(d => 
+        (desiredType ? d.type === desiredType : true) && d.free > 0
+    );
+    
+    if (!candidates.length) return null;
+    
+    candidates.sort((a, b) => b.free - a.free);
+    return candidates[0];
+}
+
+// Открытие подтверждения заселения
+function openSettleConfirm(studentId) {
+    const student = appState.queue.find(s => s.id === studentId);
+    if (!student) return;
+    
+    const recommended = autoSelectDorm(student.desiredType);
+    appState.confirmAction = {
+        type: "settle",
+        studentId: student.id,
+        recommendedDormId: recommended ? recommended.id : null,
+        selectedDormId: recommended ? recommended.id : null
     };
-    const statusFilter = statusMap[statusFilterRaw] || 'all';
-
-    try {
-        const url = new URL('http://127.0.0.1:2000/get/queue');
-        if (dormFilter) url.searchParams.set('dormType', dormFilter);
-        if (statusFilter) url.searchParams.set('status', statusFilter);
-        if (searchByName) url.searchParams.set('search', searchByName);
-        
-        const response = await fetch(url.toString());
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const students = await response.json();
-        displayQueue(Array.isArray(students) ? students : []);
-    } catch (error) {
-        console.error('Ошибка загрузки очереди:', error);
-        showMessage(adminTranslations[currentLang].error_loading, 'error');
-        const q = document.getElementById('queueList');
-        if (q) q.innerHTML = `<div class="error">${adminTranslations[currentLang].error_loading}</div>`;
-    }
+    
+    showConfirmModal();
 }
 
-function displayQueue(students) {
-    const queueList = document.getElementById('queueList');
-    const langData = adminTranslations[currentLang];
-    if (!queueList) return;
+// Открытие подтверждения отклонения
+function openRejectConfirm(studentId) {
+    appState.confirmAction = {
+        type: "reject",
+        studentId: studentId
+    };
+    
+    showConfirmModal();
+}
 
-    if (!students || students.length === 0) {
-        queueList.innerHTML = `<div class="no-data">${langData.no_data}</div>`;
-        return;
-    }
+// Открытие подтверждения выселения
+function openEvictConfirm(residentId) {
+    appState.confirmAction = {
+        type: "evict",
+        residentId: residentId
+    };
+    
+    showConfirmModal();
+}
 
-    let html = '';
-    students.forEach((student, index) => {
-        const priority = Number(student.calculated_priority ?? 0);
-        const priorityClass = priority > 0.7 ? 'priority-high' : priority > 0.4 ? 'priority-medium' : 'priority-low';
-        const priorityPercent = (priority * 100).toFixed(1);
-        const dormTypeText = student.desired_dormitory_type || '—';
-        const publicWorkText = student.has_public_work ? langData.public_work + ': Да' : langData.public_work + ': Нет';
-
-        html += `
-            <div class="queue-item ${priorityClass}" data-student-id="${student.student_id}">
-                <div class="queue-rank">${index + 1}</div>
-                <div class="student-info">
-                    <strong>${escapeHtml(student.full_name || '—')}</strong>
-                    <div class="student-details">
-                        <span><i class="fas fa-home"></i> ${langData.dorm_type}: ${escapeHtml(dormTypeText)}</span>
-                        <span><i class="fas fa-star"></i> ${langData.high_priority}: ${priorityPercent}%</span>
-                    </div>
-                    <div class="student-details">
-                        <span><i class="fas fa-graduation-cap"></i> ${langData.gpa}: ${escapeHtml(String(student.average_grade ?? '—'))}</span>
-                        <span><i class="fas fa-money-bill"></i> ${langData.income}: ${escapeHtml(String(student.family_income_per_member ?? '—'))}</span>
-                    </div>
-                    <div class="student-details">
-                        <span><i class="fas fa-phone"></i> ${langData.phone}: ${escapeHtml(student.phone_number || '—')}</span>
-                        <span><i class="fas fa-calendar"></i> ${langData.application_date}: ${formatDate(student.application_date)}</span>
-                    </div>
-                    <div>${publicWorkText}</div>
-                </div>
-                <div class="queue-actions">
-                    <button class="btn-settle" onclick="settleStudent(${student.student_id})" title="${langData.btn_settle}">
-                        <i class="fas fa-home"></i> ${langData.btn_settle}
-                    </button>
-                    <button class="btn-reject" onclick="rejectApplication(${student.student_id})" title="${langData.btn_reject}">
-                        <i class="fas fa-times"></i> ${langData.btn_reject}
-                    </button>
-                </div>
+// Показать модальное окно подтверждения
+function showConfirmModal() {
+    const confirmContent = document.getElementById('confirm-content');
+    
+    if (appState.confirmAction.type === 'settle') {
+        const student = appState.queue.find(s => s.id === appState.confirmAction.studentId);
+        const recommendedDorm = appState.dorms.find(d => d.id === appState.confirmAction.recommendedDormId);
+        
+        confirmContent.innerHTML = `
+            <h3>Заселение — выбор общежития</h3>
+            <div class="student-details">Студент: <b>${student.name}</b> · Желаемый тип: <b>${student.desiredType}</b></div>
+            
+            <div class="mt-3">
+                <div class="student-details">Рекомендуемое общежитие:</div>
+                <div class="student-name">${recommendedDorm ? recommendedDorm.address : 'Нет доступных'}</div>
+            </div>
+            
+            <div class="mt-3">
+                <select id="dorm-select" class="confirm-select">
+                    ${appState.dorms
+                        .filter(d => d.free > 0 && (student.desiredType ? d.type === student.desiredType : true))
+                        .map(d => `<option value="${d.id}" ${d.id === appState.confirmAction.selectedDormId ? 'selected' : ''}>№${d.id} · ${d.address} (Свободно: ${d.free})</option>`)
+                        .join('')}
+                </select>
+            </div>
+            
+            <div class="modal-actions">
+                <button id="cancel-confirm" class="cancel-btn">Отмена</button>
+                <button id="apply-confirm" class="confirm-btn">Заселить</button>
             </div>
         `;
-    });
-
-    queueList.innerHTML = html;
-}
-
-// =======================
-// Действия: заселение / отклонение
-// =======================
-async function settleStudent(studentId) {
-    if (!confirm(adminTranslations[currentLang].settle_confirm)) return;
-    try {
-        const resp = await fetch('http://127.0.0.1:2000/settle/student', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ studentId })
+        
+        // Обработчик изменения выбора общежития
+        document.getElementById('dorm-select').addEventListener('change', function(e) {
+            appState.confirmAction.selectedDormId = Number(e.target.value);
         });
-        const result = await resp.json();
-        if (result.success) {
-            showMessage(adminTranslations[currentLang].success_settle, 'success');
-            loadQueue();
-            loadResidents();
-            loadDormitories();
-        } else {
-            showMessage(adminTranslations[currentLang].error_action + ': ' + (result.message || adminTranslations[currentLang].no_free_rooms), 'error');
-        }
-    } catch (err) {
-        showMessage(adminTranslations[currentLang].error_action + ': ' + (err.message || err), 'error');
-    }
-}
-
-async function rejectApplication(studentId) {
-    if (!confirm(adminTranslations[currentLang].reject_confirm)) return;
-    try {
-        const resp = await fetch('http://127.0.0.1:2000/reject/application', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ studentId })
-        });
-        const result = await resp.json();
-        if (result.success) {
-            showMessage(adminTranslations[currentLang].success_reject, 'success');
-            loadQueue();
-        } else {
-            showMessage(adminTranslations[currentLang].error_action + ': ' + (result.message || 'неизвестно'), 'error');
-        }
-    } catch (err) {
-        showMessage(adminTranslations[currentLang].error_action + ': ' + (err.message || err), 'error');
-    }
-}
-
-// =======================
-// Общежития (загрузка и отображение)
-// =======================
-async function loadDormitories() {
-    try {
-        const dormitoriesTypeFilter = document.getElementById('dormitoriesTypeFilter') ? document.getElementById('dormitoriesTypeFilter').value : '';
-        const dormFilter = mapDormFilterValue(dormitoriesTypeFilter);
-
-        const url = new URL('http://127.0.0.1:2000/get/dormitories');
-        if (dormFilter) url.searchParams.set('type', dormFilter);
-
-        const resp = await fetch(url.toString());
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const dorms = await resp.json();
-        displayDormitories(Array.isArray(dorms) ? dorms : []);
-        populateResidentDormFilter(Array.isArray(dorms) ? dorms : []);
-    } catch (err) {
-        console.error('Ошибка загрузки общежитий:', err);
-        showMessage(adminTranslations[currentLang].error_loading, 'error');
-        const d = document.getElementById('dormitoriesList');
-        if (d) d.innerHTML = `<div class="error">${adminTranslations[currentLang].error_loading}</div>`;
-    }
-}
-
-function displayDormitories(dorms) {
-    const dormList = document.getElementById('dormitoriesList');
-    const langData = adminTranslations[currentLang];
-    if (!dormList) return;
-    if (!dorms || dorms.length === 0) {
-        dormList.innerHTML = `<div class="no-data">${langData.no_data}</div>`;
-        return;
-    }
-
-    let html = '';
-    dorms.forEach(dorm => {
-        const total = dorm.total_capacity ?? 0;
-        const available = (dorm.Available_seats !== undefined && dorm.Available_seats !== null) ? dorm.Available_seats : 0;
-        const occupied = dorm.occupied_rooms ?? (total - available);
-        const free = available;
-        const vacancyRate = total > 0 ? ((free / total) * 100).toFixed(1) : '0.0';
-        const typeText = dorm.dormitory_type_family ?? '—';
-        const freeRooms = Math.max(0, (dorm.rooms_count ?? 0) - (dorm.occupied_rooms ?? 0));
-
-        html += `
-            <div class="dorm-card">
-                <div class="dorm-header">
-                    <h3><i class="fas fa-building"></i> ${escapeHtml(dorm.address || '—')}</h3>
-                    <span class="dorm-type ${typeText === 'семейное' ? 'family-type' : 'single-type'}">${escapeHtml(typeText)}</span>
-                </div>
-                <div class="dorm-stats">
-                    <div class="stat-item">
-                        <div class="stat-value">${total}</div>
-                        <div class="stat-label">${langData.total_capacity}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value ${occupied > 0 ? 'occupied' : ''}">${occupied}</div>
-                        <div class="stat-label">${langData.occupied}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value ${free > 0 ? 'free' : 'no-free'}">${free}</div>
-                        <div class="stat-label">${langData.free}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value ${free > 0 ? 'free' : 'no-free'}">${vacancyRate}%</div>
-                        <div class="stat-label">${langData.vacancy_rate}</div>
-                    </div>
-                </div>
-                <div class="dorm-details">
-                    <div class="detail-item">
-                        <i class="fas fa-door-closed"></i>
-                        <span>${langData.rooms}: ${dorm.rooms_count ?? 0}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-door-open"></i>
-                        <span>${langData.free_rooms}: ${freeRooms}</span>
-                    </div>
-                </div>
-                <div class="dorm-status">
-                    <div class="status-indicator ${free > 0 ? 'has-vacancy' : 'no-vacancy'}">
-                        ${free > 0 ? '<i class="fas fa-check-circle"></i> Есть свободные места' : '<i class="fas fa-times-circle"></i> Нет свободных мест'}
-                    </div>
-                </div>
+    } else {
+        const actionText = appState.confirmAction.type === 'reject' ? 'Отклонить заявку?' : 'Выселить студента?';
+        
+        confirmContent.innerHTML = `
+            <h3>Подтверждение</h3>
+            <p class="student-details">${actionText}</p>
+            <div class="modal-actions">
+                <button id="cancel-confirm" class="cancel-btn">Отмена</button>
+                <button id="apply-confirm" class="confirm-btn">Подтвердить</button>
             </div>
         `;
-    });
-
-    dormList.innerHTML = html;
+    }
+    
+    // Обработчики для кнопок подтверждения
+    document.getElementById('cancel-confirm').addEventListener('click', cancelConfirm);
+    document.getElementById('apply-confirm').addEventListener('click', applyConfirm);
+    
+    document.getElementById('confirm-modal').classList.add('active');
 }
 
-function populateResidentDormFilter(dorms) {
-    const select = document.getElementById('residentDormFilter');
-    if (!select) return;
-    const cur = select.value;
-    const langData = adminTranslations[currentLang];
-
-    select.innerHTML = `<option value="">${langData.filter_all_dorms}</option>`;
-    dorms.forEach(d => {
-        const opt = document.createElement('option');
-        opt.value = d.dormitory_id;
-        opt.textContent = d.address || `Общежитие ${d.dormitory_id}`;
-        select.appendChild(opt);
-    });
-    if (cur) select.value = cur;
+// Отмена подтверждения
+function cancelConfirm() {
+    appState.confirmAction = null;
+    document.getElementById('confirm-modal').classList.remove('active');
 }
 
-// =======================
-// Жильцы (загрузка и отображение)
-// =======================
-async function loadResidents() {
-    try {
-        const dormFilter = document.getElementById('residentDormFilter') ? document.getElementById('residentDormFilter').value : '';
-        const searchResidentByName = document.getElementById('searchResidentByName') ? document.getElementById('searchResidentByName').value : '';
+// Применение подтверждения
+function applyConfirm() {
+    if (!appState.confirmAction) return;
+    
+    if (appState.confirmAction.type === 'settle') {
+        const student = appState.queue.find(s => s.id === appState.confirmAction.studentId);
+        const dorm = appState.dorms.find(d => d.id === Number(appState.confirmAction.selectedDormId));
         
-        const url = new URL('http://127.0.0.1:2000/get/residents');
-        if (dormFilter) url.searchParams.set('dormId', dormFilter);
-        if (searchResidentByName) url.searchParams.set('search', searchResidentByName);
-        
-        const resp = await fetch(url.toString());
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const residents = await resp.json();
-        displayResidents(Array.isArray(residents) ? residents : []);
-    } catch (err) {
-        console.error('Ошибка загрузки жильцов:', err);
-        showMessage(adminTranslations[currentLang].error_loading, 'error');
-        const list = document.getElementById('residentsList');
-        if (list) list.innerHTML = `<div class="error">${adminTranslations[currentLang].error_loading}</div>`;
-    }
-}
-
-function displayResidents(residents) {
-    const list = document.getElementById('residentsList');
-    const langData = adminTranslations[currentLang];
-    if (!list) return;
-
-    if (!residents || residents.length === 0) {
-        list.innerHTML = `<div class="no-data">${langData.no_data}</div>`;
-        return;
-    }
-
-    let html = '';
-    residents.forEach(r => {
-        html += `
-            <div class="queue-item resident-item">
-                <div class="student-info">
-                    <strong><i class="fas fa-user"></i> ${escapeHtml(r.full_name || '—')}</strong>
-                    <div class="resident-details">
-                        <span><i class="fas fa-building"></i> ${escapeHtml(r.address || '—')}</span>
-                        <span><i class="fas fa-door-open"></i> ${langData.room}: ${escapeHtml(String(r.room_number || r.room_id || '—'))}</span>
-                    </div>
-                    <div class="resident-details">
-                        <span><i class="fas fa-calendar-check"></i> ${langData.check_in_date}: ${formatDate(r.check_in_date)}</span>
-                        <span><i class="fas fa-id-card"></i> ID: ${r.student_id}</span>
-                    </div>
-                </div>
-                <div class="queue-actions">
-                    <button class="btn-reject" onclick="evictStudent(${r.residence_id})" title="${langData.btn_evict}">
-                        <i class="fas fa-sign-out-alt"></i> ${langData.btn_evict}
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-
-    list.innerHTML = html;
-}
-
-async function evictStudent(residenceId) {
-    if (!confirm(adminTranslations[currentLang].evict_confirm)) return;
-    try {
-        const resp = await fetch('http://127.0.0.1:2000/evict/student', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ residenceId })
-        });
-        const result = await resp.json();
-        if (result.success) {
-            showMessage(adminTranslations[currentLang].success_evict, 'success');
-            loadResidents();
-            loadQueue();
-            loadDormitories();
-        } else {
-            showMessage(adminTranslations[currentLang].error_action + ': ' + (result.message || 'неизвестно'), 'error');
-        }
-    } catch (err) {
-        showMessage(adminTranslations[currentLang].error_action + ': ' + (err.message || err), 'error');
-    }
-}
-
-// =======================
-// Отчёты
-// =======================
-async function generateVacancyReport() {
-    try {
-        const resp = await fetch('http://127.0.0.1:2000/get/vacancy-report');
-        const report = await resp.json();
-        const langData = adminTranslations[currentLang];
-
-        let html = `<div class="report-table-container">
-            <table class="report-table">
-                <thead>
-                    <tr>
-                        <th>${langData.dormitories_title}</th>
-                        <th>${langData.dorm_type}</th>
-                        <th>${langData.total_capacity}</th>
-                        <th>${langData.occupied}</th>
-                        <th>${langData.free}</th>
-                        <th>${langData.vacancy_rate}</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-
-        (report || []).forEach(d => {
-            const total = d.total_capacity ?? 0;
-            const occupied = d.current_occupants ?? (total - (d.Available_seats ?? 0));
-            const free = d.free_spaces ?? d.Available_seats ?? 0;
-            const percent = (d.vacancy_percent !== undefined && d.vacancy_percent !== null) ? d.vacancy_percent : (total ? ((free/total)*100).toFixed(1) : '0.0');
-            const cls = Number(percent) > 20 ? 'high-vacancy' : Number(percent) > 5 ? 'medium-vacancy' : 'low-vacancy';
-            html += `<tr>
-                <td>${escapeHtml(d.address || '—')}</td>
-                <td>${escapeHtml(d.dormitory_type_family || '—')}</td>
-                <td>${total}</td>
-                <td>${occupied}</td>
-                <td class="${cls}">${free}</td>
-                <td class="${cls}">${percent}%</td>
-            </tr>`;
-        });
-        html += '</tbody></table></div>';
-        const el = document.getElementById('vacancyStats');
-        if (el) el.innerHTML = html;
-    } catch (err) {
-        console.error('Ошибка генерации отчета вакансий:', err);
-        const el = document.getElementById('vacancyStats');
-        if (el) el.innerHTML = `<div class="error">${adminTranslations[currentLang].error_loading}</div>`;
-    }
-}
-
-async function generateQueueReport() {
-    try {
-        const resp = await fetch('http://127.0.0.1:2000/get/queue-report');
-        const r = await resp.json();
-        const langData = adminTranslations[currentLang];
-        const el = document.getElementById('queueStats');
-        if (el) {
-            el.innerHTML = `<div class="stats-overview">
-                <div class="stat-card">
-                    <div class="stat-number">${r.total ?? 0}</div>
-                    <div class="stat-title">${langData.total_in_queue}</div>
-                </div>
-                <div class="stat-card priority-high">
-                    <div class="stat-number">${r.highPriority ?? 0}</div>
-                    <div class="stat-title">${langData.high_priority}</div>
-                </div>
-                <div class="stat-card priority-medium">
-                    <div class="stat-number">${r.mediumPriority ?? 0}</div>
-                    <div class="stat-title">${langData.medium_priority}</div>
-                </div>
-                <div class="stat-card priority-low">
-                    <div class="stat-number">${r.lowPriority ?? 0}</div>
-                    <div class="stat-title">${langData.low_priority}</div>
-                </div>
-            </div>`;
-        }
-    } catch (err) {
-        console.error('Ошибка генерации отчета очереди:', err);
-        const el = document.getElementById('queueStats');
-        if (el) el.innerHTML = `<div class="error">${adminTranslations[currentLang].error_loading}</div>`;
-    }
-}
-
-async function generateSettlementReport() {
-    try {
-        const resp = await fetch('http://127.0.0.1:2000/get/settlement-report');
-        const r = await resp.json();
-        const langData = adminTranslations[currentLang];
-        const el = document.getElementById('settlementStats');
-        if (el) {
-            el.innerHTML = `<div class="stats-overview">
-                <div class="stat-card">
-                    <div class="stat-number">${r.totalSettled ?? 0}</div>
-                    <div class="stat-title">${langData.total_settled}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${r.thisMonth ?? 0}</div>
-                    <div class="stat-title">${langData.this_month}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${r.avgWaitTime ?? 0}</div>
-                    <div class="stat-title">${langData.avg_wait_time} (${langData.days})</div>
-                </div>
-            </div>`;
-        }
-    } catch (err) {
-        console.error('Ошибка генерации отчета заселения:', err);
-        const el = document.getElementById('settlementStats');
-        if (el) el.innerHTML = `<div class="error">${adminTranslations[currentLang].error_loading}</div>`;
-    }
-}
-
-function goBack() {
-    window.location.href = '../Main/Main.html';
-}
-
-// =======================
-// Утилиты
-// =======================
-function formatDate(dateStr) {
-    if (!dateStr) return '—';
-    const d = new Date(dateStr);
-    if (isNaN(d)) return dateStr;
-    return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
-}
-
-function escapeHtml(s) {
-    if (s === undefined || s === null) return '';
-    return String(s)
-        .replaceAll('&','&amp;')
-        .replaceAll('<','&lt;')
-        .replaceAll('>','&gt;')
-        .replaceAll('"','&quot;')
-        .replaceAll("'", '&#039;');
-}
-
-function showMessage(message, type) {
-    const existing = document.querySelector('.admin-message');
-    if (existing) existing.remove();
-    const messageEl = document.createElement('div');
-    messageEl.className = `admin-message admin-message-${type}`;
-    messageEl.textContent = message;
-    document.body.appendChild(messageEl);
-    setTimeout(() => {
-        if (messageEl.parentNode) {
-            messageEl.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => {
-                if (messageEl.parentNode) messageEl.remove();
-            }, 300);
-        }
-    }, 4000);
-}
-
-// Поиск студента по имени (расширенный)
-window.searchStudent = async function(name) {
-    if (!name) {
-        showMessage('Введите имя для поиска (в консоли: searchStudent("Иван"))', 'error');
-        return;
-    }
-    try {
-        const url = new URL('http://127.0.0.1:2000/search/students');
-        url.searchParams.set('name', name);
-        const resp = await fetch(url.toString());
-        const data = await resp.json();
-        console.log('searchStudent result:', data);
-        if (!data || data.length === 0) {
-            showMessage(adminTranslations[currentLang].no_data, 'error');
+        if (!student || !dorm) {
+            cancelConfirm();
             return;
         }
         
-        // Показываем подробную информацию о найденных студентах
-        let message = `Найдено студентов: ${data.length}\n\n`;
-        data.forEach((student, index) => {
-            message += `${index + 1}. ${student.full_name}\n`;
-            message += `   GPA: ${student.average_grade || '—'}\n`;
-            message += `   Доход: ${student.family_income_per_member || '—'}\n`;
-            message += `   Заселен: ${student.is_settled ? 'Да' : 'Нет'}\n`;
-            message += `   Комната: ${student.room_id || '—'}\n`;
-            message += `   Дата заселения: ${formatDate(student.check_in_date) || '—'}\n`;
-            message += `   Последняя заявка: ${formatDate(student.last_application_date) || '—'}\n\n`;
-        });
+        // Обновление состояния
+        appState.dorms = appState.dorms.map(d => 
+            d.id === dorm.id ? { ...d, free: Math.max(0, d.free - 1) } : d
+        );
         
-        alert(message);
-    } catch (err) {
-        console.error(err);
-        showMessage(adminTranslations[currentLang].error_loading, 'error');
+        appState.queue = appState.queue.filter(s => s.id !== student.id);
+        
+        appState.settled = [
+            ...appState.settled,
+            { 
+                id: Date.now(), 
+                name: student.name, 
+                dorm: dorm.address, 
+                settleDate: new Date().toISOString().slice(0, 10), 
+                evictionDate: null 
+            }
+        ];
     }
-};
+    
+    if (appState.confirmAction.type === 'reject') {
+        appState.queue = appState.queue.filter(s => s.id !== appState.confirmAction.studentId);
+    }
+    
+    if (appState.confirmAction.type === 'evict') {
+        appState.settled = appState.settled.filter(r => r.id !== appState.confirmAction.residentId);
+    }
+    
+    // Обновление интерфейса
+    renderDashboard();
+    renderQueue();
+    renderSettled();
+    renderDorms();
+    
+    cancelConfirm();
+}
 
-document.addEventListener('DOMContentLoaded', initAdminPage);
+// Печать отчета
+function printReport(which) {
+    const title = `Отчёт — ${which}`;
+    let content = {};
+    
+    if (which === "queue") content = getFilteredQueue();
+    if (which === "settled") content = getFilteredSettled();
+    if (which === "dorms") content = getFilteredDorms();
+    
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>${title}</title>
+                <meta charset="utf-8" />
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                    pre { white-space: pre-wrap; }
+                </style>
+            </head>
+            <body>
+                <h1>${title}</h1>
+                <pre>${JSON.stringify(content, null, 2)}</pre>
+            </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.print();
+}

@@ -3,142 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate="admin_title">Панель администратора - Общежития</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Панель администратора общежитий</title>
     <link rel="stylesheet" href="StyleAdmin.css">
+    <!-- Подключение Lucide Icons через CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
-    <!-- Top Controls -->
-    <div class="top-controls">
-        <div class="nav-buttons">
-            <button class="nav-btn back-btn" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i>
-                <span data-translate="btn_back">Назад</span>
-            </button>
+    <div class="container">
+        <h1 class="main-title">Панель администратора общежитий — Демонстрация</h1>
+        
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <div class="stat-card">
+                <div class="stat-label">Общежития</div>
+                <div class="stat-value" id="dorm-count">3</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Проживает</div>
+                <div class="stat-value" id="living-count">2</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">В очереди</div>
+                <div class="stat-value" id="queue-count">3</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Свободно мест</div>
+                <div class="stat-value free-places" id="free-count">59</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Средняя загрузка</div>
+                <div class="stat-value" id="occupancy-percent">84%</div>
+            </div>
         </div>
         
-        <div class="right-controls">
-            <!-- Language Selector -->
-            <div class="language-selector">
-                <button class="language-btn" id="languageBtn">
-                    <i class="fas fa-globe"></i>
-                    <span id="currentLanguage">Русский</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                <div class="language-dropdown" id="languageDropdown">
-                    <div class="language-option" data-lang="ru">
-                        <img src="https://flagcdn.com/w40/by.png" class="language-flag" alt="Russian">
-                        Русский
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="queue">Очередь</button>
+                <button class="tab-button" data-tab="settled">Проживающие</button>
+                <button class="tab-button" data-tab="dorms">Общежития</button>
+            </div>
+            
+            <!-- Queue Tab -->
+            <div class="tab-content active" id="queue-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="search-container">
+                            <input type="text" id="queue-search" placeholder="Поиск по имени" class="search-input">
+                            <button id="queue-filter-btn" class="filter-btn">Фильтры</button>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="print-queue" class="print-btn">
+                                <i data-lucide="printer"></i> Печать списка
+                            </button>
+                        </div>
                     </div>
-                    <div class="language-option" data-lang="en">
-                        <img src="https://flagcdn.com/w40/gb.png" class="language-flag" alt="English">
-                        English
-                    </div>
-                    <div class="language-option" data-lang="es">
-                        <img src="https://flagcdn.com/w40/es.png" class="language-flag" alt="Spanish">
-                        Español
+                    
+                    <div class="queue-list" id="queue-list">
+                        <!-- Queue items will be populated by JS -->
                     </div>
                 </div>
             </div>
-
-            <!-- Theme Toggle Button -->
-            <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-moon"></i>
-            </button>
+            
+            <!-- Settled Tab -->
+            <div class="tab-content" id="settled-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="search-container">
+                            <input type="text" id="settled-search" placeholder="Поиск проживающих" class="search-input">
+                        </div>
+                        <div class="action-buttons">
+                            <button id="print-settled" class="print-btn">
+                                <i data-lucide="printer"></i> Печать проживающих
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="settled-list" id="settled-list">
+                        <!-- Settled items will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dorms Tab -->
+            <div class="tab-content" id="dorms-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="filter-container">
+                            <select id="dorm-type-filter" class="filter-select">
+                                <option value="all">Все</option>
+                                <option value="семейное">Семейные</option>
+                                <option value="несемейное">Несемейные</option>
+                            </select>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="only-free-toggle">
+                                Только свободные
+                            </label>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="print-dorms" class="print-btn">
+                                <i data-lucide="printer"></i> Печать общежитий
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="dorms-grid" id="dorms-grid">
+                        <!-- Dorm cards will be populated by JS -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="admin-container">
-        <header class="admin-header">
-            <h1 data-translate="admin_title">Панель управления общежитиями</h1>
-            <div class="admin-nav">
-                <button class="nav-btn active" onclick="showSection('queue')">
-                    <i class="fas fa-list-ol"></i> <span data-translate="nav_queue">Очередь</span>
-                </button>
-                <button class="nav-btn" onclick="showSection('dormitories')">
-                    <i class="fas fa-building"></i> <span data-translate="nav_dormitories">Общежития</span>
-                </button>
-                <button class="nav-btn" onclick="showSection('residents')">
-                    <i class="fas fa-users"></i> <span data-translate="nav_residents">Заселенные</span>
-                </button>
-                <button class="nav-btn" onclick="showSection('reports')">
-                    <i class="fas fa-chart-bar"></i> <span data-translate="nav_reports">Отчеты</span>
-                </button>
+    
+    <!-- Queue Filter Modal -->
+    <div id="queue-filter-modal" class="modal">
+        <div class="modal-content">
+            <h3>Фильтры очереди (визуал)</h3>
+            <div class="filter-grid">
+                <input type="number" id="min-score" placeholder="Мин. балл" class="filter-input">
+                <input type="number" id="max-score" placeholder="Макс. балл" class="filter-input">
+                <input type="number" id="min-income" placeholder="Мин. доход" class="filter-input">
+                <input type="number" id="max-income" placeholder="Макс. доход" class="filter-input">
             </div>
-        </header>
-
-        <!-- Секция очереди -->
-        <section id="queue-section" class="section active">
-            <h2 data-translate="queue_title">Очередь на заселение</h2>
-            <div class="filters">
-                <select id="dormFilter" onchange="loadQueue()">
-                    <option value="" data-translate="filter_all_types">Все типы</option>
-                    <option value="family" data-translate="filter_family">Семейные</option>
-                    <option value="single" data-translate="filter_single">Несемейные</option>
-                </select>
-                <select id="statusFilter" onchange="loadQueue()">
-                    <option value="pending" data-translate="status_pending">В ожидании</option>
-                    <option value="approved" data-translate="status_approved">Одобренные</option>
-                    <option value="all" data-translate="status_all">Все</option>
-                </select>
-                <button onclick="loadQueue()" class="nav-btn">
-                    <i class="fas fa-sync-alt"></i> <span data-translate="btn_refresh">Обновить</span>
-                </button>
+            <label class="checkbox-label modal-checkbox">
+                <input type="checkbox" id="only-activity">
+                Только с общественной работой
+            </label>
+            <div class="modal-actions">
+                <button id="close-filter-modal" class="cancel-btn">Закрыть</button>
+                <button id="apply-filters" class="apply-btn">Применить</button>
             </div>
-            <div id="queueList" class="queue-list">
-                <!-- Динамически заполняется -->
-            </div>
-        </section>
-
-        <!-- Секция управления общежитиями -->
-        <section id="dormitories-section" class="section">
-            <h2 data-translate="dormitories_title">Управление общежитиями</h2>
-            <div class="filters">
-                <button onclick="loadDormitories()" class="nav-btn">
-                    <i class="fas fa-sync-alt"></i> <span data-translate="btn_refresh_list">Обновить список</span>
-                </button>
-            </div>
-            <div id="dormitoriesList" class="dormitories-grid">
-                <!-- Динамически заполняется -->
-            </div>
-        </section>
-
-        <!-- Секция заселенных студентов -->
-        <section id="residents-section" class="section">
-            <h2 data-translate="residents_title">Заселенные студенты</h2>
-            <div class="filters">
-                <select id="residentDormFilter" onchange="loadResidents()">
-                    <option value="" data-translate="filter_all_dorms">Все общежития</option>
-                </select>
-                <button onclick="loadResidents()" class="nav-btn">
-                    <i class="fas fa-sync-alt"></i> <span data-translate="btn_refresh">Обновить</span>
-                </button>
-            </div>
-            <div id="residentsList" class="queue-list">
-                <!-- Динамически заполняется -->
-            </div>
-        </section>
-
-        <!-- Секция отчетов -->
-        <section id="reports-section" class="section">
-            <h2 data-translate="reports_title">Отчеты и статистика</h2>
-            <div class="reports-grid">
-                <div class="report-card" onclick="generateVacancyReport()">
-                    <h3><i class="fas fa-bed"></i> <span data-translate="report_vacancy">Свободные места</span></h3>
-                    <div id="vacancyStats" data-translate="report_click_generate">Нажмите для генерации отчета</div>
-                </div>
-                <div class="report-card" onclick="generateQueueReport()">
-                    <h3><i class="fas fa-list-ol"></i> <span data-translate="report_queue">Статистика очереди</span></h3>
-                    <div id="queueStats" data-translate="report_click_generate">Нажмите для генерации отчета</div>
-                </div>
-                <div class="report-card" onclick="generateSettlementReport()">
-                    <h3><i class="fas fa-chart-line"></i> <span data-translate="report_settlement">Статистика заселения</span></h3>
-                    <div id="settlementStats" data-translate="report_click_generate">Нажмите для генерации отчета</div>
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
-
+    
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div id="confirm-content">
+                <!-- Confirm content will be populated by JS -->
+            </div>
+        </div>
+    </div>
+    
     <script src="FunctionAdmin.js"></script>
 </body>
 </html>
