@@ -51,6 +51,9 @@
                         <div class="search-container">
                             <input type="text" id="queue-search" placeholder="Поиск по имени" class="search-input">
                             <button id="queue-filter-btn" class="filter-btn">Фильтры</button>
+                            <button id="reset-queue-filters" class="reset-icon-btn" title="Сбросить">
+                                <i data-lucide="refresh-cw"></i>
+                            </button>   
                         </div>
                         <div class="action-buttons">
                             <button id="print-queue" class="print-btn">
@@ -70,13 +73,22 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="search-container">
-                            <input type="text" id="settled-search" placeholder="Поиск проживающих" class="search-input">
+                            <select id="settled-address-filter" class="filter-select">
+                                <option value="all">Все адреса</option>
+                            </select>                            
+                            <input type="text" id="settled-search" placeholder="Поиск по имени или адресу" class="search-input">             
+                            <button id="reset-queue-filters" class="reset-icon-btn" title="Сбросить">
+                                <i data-lucide="refresh-cw"></i>
+                            </button>   
+                            <button id="sort-settled-date" class="filter-btn">
+                                Сортировать по дате
+                            </button>   
                         </div>
                         <div class="action-buttons">
                             <button id="print-settled" class="print-btn">
                                 <i data-lucide="printer"></i> Печать проживающих
                             </button>
-                        </div>
+                        </div>                     
                     </div>
                     
                     <div class="settled-list" id="settled-list">
@@ -92,13 +104,13 @@
                         <div class="filter-container">
                             <select id="dorm-type-filter" class="filter-select">
                                 <option value="all">Все</option>
-                                <option value="семейное">Семейные</option>
-                                <option value="несемейное">Несемейные</option>
+                                <option value="Семейное">Семейные</option>
+                                <option value="Не семейное">Несемейные</option>
                             </select>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="only-free-toggle">
                                 Только свободные
-                            </label>
+                            </label>                                              
                         </div>
                         <div class="action-buttons">
                             <button id="print-dorms" class="print-btn">
@@ -118,7 +130,7 @@
     <!-- Queue Filter Modal -->
     <div id="queue-filter-modal" class="modal">
         <div class="modal-content">
-            <h3>Фильтры очереди (визуал)</h3>
+            <h3>Фильтры очереди</h3>
             <div class="filter-grid">
                 <input type="number" id="min-score" placeholder="Мин. балл" class="filter-input">
                 <input type="number" id="max-score" placeholder="Макс. балл" class="filter-input">

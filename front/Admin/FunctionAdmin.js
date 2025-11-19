@@ -1,4 +1,4 @@
-// FunctionAdmin.js - Complete Fixed Version with Type Matching
+// FunctionAdmin.js - Complete Fixed Version with All Features
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
     initApp();
@@ -16,11 +16,15 @@ let appState = {
         dormType: "all",
         onlyFree: false,
         minScore: 0,
-        maxScore: 100,
+        maxScore: 10,
         minIncome: 0,
-        maxIncome: 999999,
-        onlyActivity: false
+        maxIncome: 999999999,
+        onlyActivity: false,
+        settledAddress: "all"
     },
+    sort: {
+        settledDate: "desc",
+    },    
     search: {
         queue: "",
         settled: ""
@@ -28,18 +32,41 @@ let appState = {
     confirmAction: null
 };
 
+// Функция форматирования даты
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
+
 // Функция для нормализации типа общежития
 function normalizeDormType(type) {
-    if (!type) return type;
-    const typeMap = {
-        'Семейное': 'семейное',
-        'семейное': 'семейное',
-        'family': 'семейное',
-        'Не семейное': 'несемейное',
-        'несемейное': 'несемейное',
-        'regular': 'несемейное'
-    };
-    return typeMap[type] || type;
+    if (!type) return 'Не семейное';
+    
+    const lowerType = type.toString().toLowerCase().trim();
+    const cleanType = lowerType.replace(/\d+/g, '').trim();
+
+    // СНАЧАЛА проверяем НЕ семейное
+    if (cleanType.includes('не семей') ||
+        cleanType.includes('несемей') ||
+        cleanType.includes('несемейное') ||
+        cleanType === 'не семейное') {
+        return 'Не семейное';
+    }
+
+    // Потом семейное
+    if (cleanType.includes('семей') ||
+        cleanType.includes('семейное') ||
+        cleanType.includes('family') ||
+        cleanType.includes('семейн') ||
+        cleanType === 'семейное') {
+        return 'Семейное';
+    }
+
+    return 'Не семейное';
 }
 
 // Функция для проверки соответствия типов
@@ -80,7 +107,6 @@ async function apiPost(endpoint, data) {
 async function loadDorms() {
     try {
         const dormData = await apiGet('/dormitories');
-        // Нормализуем типы общежитий при загрузке
         appState.dorms = dormData.map(d => ({
             ...d,
             type: normalizeDormType(d.type)
@@ -95,7 +121,6 @@ async function loadDorms() {
 async function loadQueue() {
     try {
         const queueData = await apiGet('/queue');
-        // Преобразуем данные для фронтенда
         appState.queue = queueData.map(q => ({
             id: q.id,
             studentId: q.studentId,
@@ -119,7 +144,6 @@ async function loadQueue() {
 async function loadSettled() {
     try {
         const settledData = await apiGet('/residents');
-        // Преобразуем данные для фронтенда
         appState.settled = settledData.map(r => ({
             id: r.id,
             studentId: r.studentId,
@@ -135,20 +159,28 @@ async function loadSettled() {
     }
 }
 
+function populateAddressFilter() {
+    const select = document.getElementById("settled-address-filter");
+    if (!select) return;
+
+    const addresses = [...new Set(appState.dorms.map(d => d.address))];
+
+    select.innerHTML = 
+        `<option value="all">Все адреса</option>` +
+        addresses.map(a => `<option value="${a}">${a}</option>`).join('');
+}
+
 // Инициализация приложения
 async function initApp() {
-    // Настройка обработчиков событий
     setupEventListeners();
     
-    // Загружаем данные с сервера
     try {
         await Promise.all([loadDorms(), loadQueue(), loadSettled()]);
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
         alert('Ошибка загрузки данных с сервера');
     }
-    
-    // Первоначальный рендеринг
+    populateAddressFilter();
     renderDashboard();
     renderQueue();
     renderSettled();
@@ -198,6 +230,22 @@ function setupEventListeners() {
             appState.filters.onlyFree = e.target.checked;
             renderDorms();
         });
+    }
+    
+    // Кнопки сброса
+    const resetQueueFilters = document.getElementById('reset-queue-filters');
+    if (resetQueueFilters) {
+        resetQueueFilters.addEventListener('click', resetQueueFiltersHandler);
+    }
+    
+    const resetSettledSearch = document.getElementById('reset-settled-search');
+    if (resetSettledSearch) {
+        resetSettledSearch.addEventListener('click', resetSettledSearchHandler);
+    }
+    
+    const resetDormFilters = document.getElementById('reset-dorm-filters');
+    if (resetDormFilters) {
+        resetDormFilters.addEventListener('click', resetDormFiltersHandler);
     }
     
     // Модальное окно фильтров очереди
@@ -252,11 +300,27 @@ function setupEventListeners() {
             }
         });
     });
+    const sortSettledDate = document.getElementById("sort-settled-date");
+    if (sortSettledDate) {
+        sortSettledDate.addEventListener("click", () => {
+            appState.sort.settledDate =
+                appState.sort.settledDate === "desc" ? "asc" : "desc";
+    
+            renderSettled();
+        });
+    }
+    const addrFilter = document.getElementById("settled-address-filter");
+    if (addrFilter) {
+        addrFilter.addEventListener("change", function (e) {
+            appState.filters.settledAddress = e.target.value;
+            renderSettled();
+        });
+    }
+    
 }
 
 // Переключение вкладок
 function switchTab(tabId) {
-    // Обновление активных кнопок вкладок
     document.querySelectorAll('.tab-button').forEach(button => {
         button.classList.remove('active');
     });
@@ -265,7 +329,6 @@ function switchTab(tabId) {
         activeButton.classList.add('active');
     }
     
-    // Обновление активного контента вкладок
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
     });
@@ -274,7 +337,6 @@ function switchTab(tabId) {
         activeTab.classList.add('active');
     }
     
-    // Обновление контента при переключении вкладок
     if (tabId === 'queue') {
         renderQueue();
     } else if (tabId === 'settled') {
@@ -339,7 +401,7 @@ function renderQueue() {
                     <div class="priority-badge ${badge.class}">${badge.text}</div>
                     <div>
                         <div class="student-name">${student.name}</div>
-                        <div class="student-details">Заявка: ${student.applicationDate} · Приоритет: <span class="font-bold">${student.priority}</span></div>
+                        <div class="student-details">Заявка: ${student.applicationDate} · Приоритет: <span class="font-bold">${student.priority}</span> · Тип: <span class="dorm-type-highlight">${student.desiredType || 'Не указан'}</span></div>
                     </div>
                 </div>
                 <div class="student-details">Баллы: ${student.score} · Доход: ${student.income} · Общественная работа: ${student.activity ? 'Да' : 'Нет'}</div>
@@ -356,7 +418,6 @@ function renderQueue() {
         
         queueList.appendChild(queueItem);
         
-        // Добавление обработчиков событий для кнопок
         const settleBtn = queueItem.querySelector('.settle-btn');
         if (settleBtn) {
             settleBtn.addEventListener('click', function() {
@@ -374,7 +435,6 @@ function renderQueue() {
         }
     });
     
-    // Обновление иконок
     lucide.createIcons();
 }
 
@@ -391,8 +451,8 @@ function getFilteredQueue() {
 
 // Получение бейджа приоритета
 function getPriorityBadge(priority) {
-    if (priority >= 650) return { text: "Высокий", class: "priority-high" };
-    if (priority >= 200) return { text: "Средний", class: "priority-medium" };
+    if (priority >= 65) return { text: "Высокий", class: "priority-high" };
+    if (priority >= 20) return { text: "Средний", class: "priority-medium" };
     return { text: "Низкий", class: "priority-low" };
 }
 
@@ -416,7 +476,7 @@ function renderSettled() {
         settledItem.innerHTML = `
             <div>
                 <div class="student-name">${resident.name}</div>
-                <div class="student-details">Общежитие: ${resident.dorm} · Заселен: ${resident.settleDate}</div>
+                <div class="student-details">Общежитие: ${resident.dorm} · Заселен: ${formatDate(resident.settleDate)}</div>
             </div>
             <div class="settled-actions">
                 <button class="action-btn evict-btn" data-resident-id="${resident.id}">
@@ -427,7 +487,6 @@ function renderSettled() {
         
         settledList.appendChild(settledItem);
         
-        // Добавление обработчиков событий для кнопок
         const evictBtn = settledItem.querySelector('.evict-btn');
         if (evictBtn) {
             evictBtn.addEventListener('click', function() {
@@ -437,16 +496,37 @@ function renderSettled() {
         }
     });
     
-    // Обновление иконок
     lucide.createIcons();
 }
 
 // Получение отфильтрованных проживающих
 function getFilteredSettled() {
-    return appState.settled.filter(s => 
-        s.name && s.name.toLowerCase().includes(appState.search.settled.toLowerCase())
-    );
+    let result = appState.settled.filter(s => {
+        const query = appState.search.settled.toLowerCase();
+
+        const matchesSearch =
+            s.name.toLowerCase().includes(query) ||
+            s.dorm.toLowerCase().includes(query);
+
+        const matchesAddress =
+            appState.filters.settledAddress === "all" ||
+            s.dorm === appState.filters.settledAddress;
+
+        return matchesSearch && matchesAddress;
+    });
+
+    result.sort((a, b) => {
+        if (appState.sort.settledDate === "asc")
+            return new Date(a.settleDate) - new Date(b.settleDate);
+        else
+            return new Date(b.settleDate) - new Date(a.settleDate);
+    });
+
+    return result;
 }
+
+
+
 
 // Рендеринг общежитий
 function renderDorms() {
@@ -475,7 +555,6 @@ function renderDorms() {
             <div class="dorm-info">
                 <p><b>Адрес:</b> ${dorm.address}</p>
                 <p><b>Тип:</b> ${dorm.type}</p>
-                <p><b>Особенность:</b> ${dorm.feature}</p>
             </div>
             <div class="dorm-stats">
                 <div class="free-count">Свободно: ${dorm.free}</div>
@@ -557,13 +636,50 @@ function applyQueueFilters() {
     const onlyActivity = document.getElementById('only-activity');
     
     if (minScore) appState.filters.minScore = Number(minScore.value) || 0;
-    if (maxScore) appState.filters.maxScore = Number(maxScore.value) || 100;
+    if (maxScore) appState.filters.maxScore = Number(maxScore.value) || 10;
     if (minIncome) appState.filters.minIncome = Number(minIncome.value) || 0;
-    if (maxIncome) appState.filters.maxIncome = Number(maxIncome.value) || 999999;
+    if (maxIncome) appState.filters.maxIncome = Number(maxIncome.value) || 999999999;
     if (onlyActivity) appState.filters.onlyActivity = onlyActivity.checked;
     
     closeQueueFilterModal();
     renderQueue();
+}
+
+// Сброс фильтров очереди
+function resetQueueFiltersHandler() {
+    appState.search.queue = "";
+    appState.filters.minScore = 0;
+    appState.filters.maxScore = 10;
+    appState.filters.minIncome = 0;
+    appState.filters.maxIncome = 999999999;
+    appState.filters.onlyActivity = false;
+    
+    const queueSearch = document.getElementById('queue-search');
+    if (queueSearch) queueSearch.value = "";
+    
+    renderQueue();
+}
+
+// Сброс поиска проживающих
+function resetSettledSearchHandler() {
+    appState.search.settled = "";
+    const settledSearch = document.getElementById('settled-search');
+    if (settledSearch) settledSearch.value = "";
+    renderSettled();
+}
+
+// Сброс фильтров общежитий
+function resetDormFiltersHandler() {
+    appState.filters.dormType = "all";
+    appState.filters.onlyFree = false;
+    
+    const dormTypeFilter = document.getElementById('dorm-type-filter');
+    const onlyFreeToggle = document.getElementById('only-free-toggle');
+    
+    if (dormTypeFilter) dormTypeFilter.value = "all";
+    if (onlyFreeToggle) onlyFreeToggle.checked = false;
+    
+    renderDorms();
 }
 
 // Установка действия подтверждения
@@ -581,7 +697,7 @@ function openSettleConfirm(studentId) {
     setConfirmAction({
         type: "settle",
         studentId: studentId,
-        studentDesiredType: student.desiredType, // Сохраняем желаемый тип студента
+        studentDesiredType: student.desiredType,
         recommendedDormId: recommended ? recommended.id : null,
         selectedDormId: recommended ? recommended.id : null
     });
@@ -612,7 +728,6 @@ function showConfirmModal() {
         const student = appState.queue.find(s => s.studentId === appState.confirmAction.studentId);
         const recommendedDorm = appState.dorms.find(d => d.id === appState.confirmAction.recommendedDormId);
         
-        // Получаем доступные общежития с проверкой типа
         const availableDorms = appState.dorms.filter(d => 
             (d.free || 0) > 0 && 
             (appState.confirmAction.studentDesiredType ? isDormTypeMatching(d.type, appState.confirmAction.studentDesiredType) : true)
@@ -656,7 +771,6 @@ function showConfirmModal() {
             </div>
         `;
         
-        // Обработчик изменения выбора общежития
         const dormSelect = document.getElementById('dorm-select');
         if (dormSelect) {
             dormSelect.addEventListener('change', function(e) {
@@ -676,10 +790,12 @@ function showConfirmModal() {
         `;
     }
     
-    // Обработчики для кнопок подтверждения
+    // ИСПРАВЛЕНИЕ: Правильный обработчик для кнопки "Отмена"
     const cancelConfirm = document.getElementById('cancel-confirm');
     if (cancelConfirm) {
-        cancelConfirm.addEventListener('click', cancelConfirm);
+        cancelConfirm.addEventListener('click', function() {
+            cancelConfirmAction();
+        });
     }
     
     const applyConfirm = document.getElementById('apply-confirm');
@@ -693,8 +809,8 @@ function showConfirmModal() {
     }
 }
 
-// Отмена подтверждения
-function cancelConfirm() {
+// Отмена подтверждения (исправленная функция)
+function cancelConfirmAction() {
     appState.confirmAction = null;
     const modal = document.getElementById('confirm-modal');
     if (modal) {
@@ -708,7 +824,6 @@ async function applyConfirmAction() {
 
     try {
         if (appState.confirmAction.type === 'settle') {
-            // Дополнительная проверка типа перед заселением
             const student = appState.queue.find(s => s.studentId === appState.confirmAction.studentId);
             const selectedDorm = appState.dorms.find(d => d.id === appState.confirmAction.selectedDormId);
             
@@ -734,16 +849,14 @@ async function applyConfirmAction() {
             });
         }
 
-        // Перезагружаем данные с сервера
         await Promise.all([loadDorms(), loadQueue(), loadSettled()]);
         
-        // Обновляем интерфейс
         renderDashboard();
         renderQueue();
         renderSettled();
         renderDorms();
         
-        cancelConfirm();
+        cancelConfirmAction();
         
     } catch (error) {
         console.error('Ошибка выполнения действия:', error);
@@ -784,7 +897,7 @@ function printReport(which) {
     printWindow.print();
 }
 
-// Добавляем стиль для сообщения об отсутствии данных
+// Добавляем стили
 const style = document.createElement('style');
 style.textContent = `
     .no-data {
@@ -899,6 +1012,47 @@ style.textContent = `
     .confirm-btn:disabled {
         background: #9ca3af;
         cursor: not-allowed;
+    }
+    
+    .reset-btn {
+        padding: 6px 12px;
+        background: #6b7280;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .reset-btn:hover {
+        background: #4b5563;
+    }
+    
+    .dorm-type-highlight {
+        color: #1e40af;
+        font-weight: bold;
+        background: #dbeafe;
+        padding: 2px 6px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+    
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .font-bold {
+        font-weight: bold;
+    }
+    
+    .mt-3 {
+        margin-top: 0.75rem;
     }
 `;
 document.head.appendChild(style);

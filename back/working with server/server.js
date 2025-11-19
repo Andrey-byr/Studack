@@ -15,16 +15,31 @@ const pool = mysql2.createPool({
 });
 
 function normalizeDormType(type) {
-    const typeMap = {
-        'Семейное': 'Семейное',
-        'семейное': 'Семейное',
-        'family': 'Семейное',
-        'Не семейное': 'Не семейное',
-        'несемейное': 'Не семейное',
-        'regular': 'Не семейное'
-    };
-    return typeMap[type] || 'Не семейное';
+    if (!type) return 'Не семейное';
+    
+    const lowerType = type.toString().toLowerCase().trim();
+    const cleanType = lowerType.replace(/\d+/g, '').trim();
+
+    // СНАЧАЛА проверяем НЕ семейное
+    if (cleanType.includes('не семей') ||
+        cleanType.includes('несемей') ||
+        cleanType.includes('несемейное') ||
+        cleanType === 'не семейное') {
+        return 'Не семейное';
+    }
+
+    // Потом семейное
+    if (cleanType.includes('семей') ||
+        cleanType.includes('семейное') ||
+        cleanType.includes('family') ||
+        cleanType.includes('семейн') ||
+        cleanType === 'семейное') {
+        return 'Семейное';
+    }
+
+    return 'Не семейное';
 }
+
 
 
 // добавление студента 
@@ -94,7 +109,7 @@ app.get('/dormitories', async (req, res) => {
         const dorms = rows.map(d => ({
             id: d.dormitory_id,
             address: d.address,
-            type: d.dormitory_type_family ? 'семейное' : 'несемейное',
+            type: normalizeDormType(d.dormitory_type_family),
             total: d.total_capacity,
             free: d.Available_seats,
             feature: d.dormitory_type_family ? 'Отдельные кухни' : 'Общие условия'
@@ -114,8 +129,8 @@ app.get('/queue', async (req, res) => {
             id: q.application_id,
             studentId: q.student_id,
             name: q.full_name,
-            priority: Math.round(q.calculated_priority * 1000), // Увеличиваем для наглядности
-            desiredType: q.desired_dormitory_type,
+            priority: Math.round(q.calculated_priority * 100), // Увеличиваем для наглядности
+            desiredType: normalizeDormType(q.desired_dormitory_type),
             score: q.average_grade,
             income: q.family_income_per_member,
             activity: q.has_public_work,
